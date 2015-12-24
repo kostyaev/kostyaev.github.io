@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+<title type="text">Dmitry Kostyaev</title>
+<generator uri="https://github.com/mojombo/jekyll">Jekyll</generator>
+<link rel="self" type="application/atom+xml" href="http://www.kostyaev.me/feed.xml" />
+<link rel="alternate" type="text/html" href="http://www.kostyaev.me" />
+<updated>2015-12-25T00:40:54+03:00</updated>
+<id>http://www.kostyaev.me/</id>
+<author>
+  <name>Kostyaev Dmitry</name>
+  <uri>http://www.kostyaev.me/</uri>
+  <email>dmitry@kostyaev.me</email>
+</author>
+
+
+<entry>
+  <title type="html"><![CDATA[Data Streams Review]]></title>
+  <link>http://www.kostyaev.me/article/Data%20Streams%20Review</link>
+  <id>http://www.kostyaev.me/article/Data Streams Review</id>
+  <updated>2014-07-27T00:00:00-00:00</updated>
+  <published>2014-07-27T00:00:00+04:00</published>
+  
+  <author>
+    <name>Kostyaev Dmitry</name>
+    <uri>http://www.kostyaev.me</uri>
+    <email>dmitry@kostyaev.me</email>
+  </author>
+  <content type="html">&lt;h3 id=&quot;what-is-a-stream&quot;&gt;What is a Stream?&lt;/h3&gt;
+&lt;p&gt;In general stream is an ephemeral flow of data, possibly unbounded in size. More specifically, it is an active process, that involves moving and transforming data. Nice and fun explanation I’ve found for streams lies &lt;a href=&quot;http://howtonode.org/streams-explained&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;when-do-you-need-streams&quot;&gt;When do you need Streams?&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;Bulk data transfer.&lt;/li&gt;
+  &lt;li&gt;Real-time data sources.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;reactive-streams&quot;&gt;Reactive Streams&lt;/h3&gt;
+&lt;p&gt;Reactive Streams is an initiative to provide a standard for asynchronous stream processing with non-blocking back pressure on the JVM. &lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt; Lack of backpressure for streaming data means if there’s a step that’s producing faster than the next step can consume, eventually the entire system will crash. If you have a TCP connection with orders coming in and you need to perform some processing to it before passing it on to another connection, you need to make sure you aren’t pulling things off the inbound connection faster than you are able to send to the outbound connection. If you don’t, then you’ll risk blowing the JVM up with an OutOfMemoryError. &lt;sup id=&quot;fnref:2&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;streams-specification-and-implementations&quot;&gt;Streams specification and implementations:&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/reactive-streams/reactive-streams&quot;&gt;Streams specification&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Akka streams &lt;a href=&quot;http://akka.io/docs/&quot;&gt;(docs)&lt;/a&gt; &lt;a href=&quot;https://github.com/typesafehub/activator-akka-stream-scala#master&quot;&gt;(template)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;RxJava &lt;a href=&quot;https://github.com/ReactiveX/RxJava&quot;&gt;(github)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Reactor composable &lt;a href=&quot;https://github.com/reactor/reactor&quot;&gt;(github)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;core-concepts&quot;&gt;Core concepts&lt;/h3&gt;
+
+&lt;h4 id=&quot;upstream&quot;&gt;Upstream&lt;/h4&gt;
+&lt;p&gt;The end where data comes from.&lt;/p&gt;
+
+&lt;h4 id=&quot;downstream&quot;&gt;Downstream&lt;/h4&gt;
+&lt;p&gt;The end where data comes to.&lt;/p&gt;
+
+&lt;h4 id=&quot;back-pressure&quot;&gt;Back-pressure&lt;/h4&gt;
+&lt;p&gt;A means of flow-control, a way for consumers of data to notify a producer about their current availability, effectively slowing down the upstream source to match their consumption speeds. In the context of Akka Streams back-pressure is always understood as non-blocking and asynchronous&lt;/p&gt;
+
+&lt;h4 id=&quot;push-behavior&quot;&gt;Push behavior&lt;/h4&gt;
+&lt;p&gt;Behavior in which systems take events and push them through a signal network to achieve a result.&lt;/p&gt;
+
+&lt;h4 id=&quot;pull-behavior&quot;&gt;Pull behavior&lt;/h4&gt;
+&lt;p&gt;Behavior in which systems wait until the result is demanded, and work backwards through the network to retrieve the value. demanded.&lt;/p&gt;
+
+&lt;h4 id=&quot;dynamic-push-pull&quot;&gt;Dynamic Push-Pull&lt;/h4&gt;
+&lt;p&gt;Push behavior when consumer is faster
+Pull when producer is faster&lt;/p&gt;
+
+&lt;h4 id=&quot;codec&quot;&gt;Codec&lt;/h4&gt;
+&lt;p&gt;Component that converts a stream from one type to another.&lt;/p&gt;
+
+&lt;h4 id=&quot;source&quot;&gt;Source&lt;/h4&gt;
+&lt;p&gt;A processing stage with exactly one output, emitting data elements whenever downstream processing stages are ready to receive them.&lt;/p&gt;
+
+&lt;h4 id=&quot;sink&quot;&gt;Sink&lt;/h4&gt;
+&lt;p&gt;A processing stage with exactly one input, requesting and accepting data elements possibly slowing down the upstream producer of elements&lt;/p&gt;
+
+&lt;h4 id=&quot;flow&quot;&gt;Flow&lt;/h4&gt;
+&lt;p&gt;A processing stage which has exactly one input and output, which connects its up- and downstreams by transforming the data elements flowing through it.&lt;/p&gt;
+
+&lt;div class=&quot;footnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:1&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;http://www.reactive-streams.org&quot;&gt;http://www.reactive-streams.org&lt;/a&gt; &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:2&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;http://readwrite.com/2014/04/17/real-time-data-streaming-viktor-klang-typesafe-reactivestreams-jvm&quot;&gt;Real-Time Data Streaming Gets Standardized&lt;/a&gt; &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;
+
+  &lt;p&gt;&lt;a href=&quot;http://www.kostyaev.me/article/Data%20Streams%20Review&quot;&gt;Data Streams Review&lt;/a&gt; was originally published by Kostyaev Dmitry at &lt;a href=&quot;http://www.kostyaev.me&quot;&gt;Dmitry Kostyaev&lt;/a&gt; on July 27, 2014.&lt;/p&gt;</content>
+</entry>
+
+
+<entry>
+  <title type="html"><![CDATA[Sentiment analysis with CoreNLP]]></title>
+  <link>http://www.kostyaev.me/article/Sentiment%20analysis</link>
+  <id>http://www.kostyaev.me/article/Sentiment analysis</id>
+  <updated>2014-06-21T00:00:00-00:00</updated>
+  <published>2014-06-21T00:00:00+04:00</published>
+  
+  <author>
+    <name>Kostyaev Dmitry</name>
+    <uri>http://www.kostyaev.me</uri>
+    <email>dmitry@kostyaev.me</email>
+  </author>
+  <content type="html">&lt;p&gt;In the rise of social media customer’s opinions has become extremely valuable for businesses selling their products, financial markets and social researches. To extract opinions from customer’s reviews, comments or other kind of text data you might want to know what sentiment analysis is.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Sentiment analysis and opinion mining is the field of study that analyzes people’s opinions, sentiments, evaluations, attitudes, and emotions from written language.&lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;So the the basic task of sentiment analysis is classifying text into some emotive categories. The most common set of categories are: positive, neutral and negative.&lt;/p&gt;
+
+&lt;h3 id=&quot;methods-for-sentiment-analysis&quot;&gt;Methods for sentiment analysis&lt;/h3&gt;
+&lt;p&gt;There is a number of methods for sentiment analysis that can be divided in two groups:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Lexicon-based methods&lt;/li&gt;
+  &lt;li&gt;Machine learning methods
+    &lt;ul&gt;
+      &lt;li&gt;NB (Naive Bayes classifier)&lt;/li&gt;
+      &lt;li&gt;biNB (Naive Bayes with bag of bigram features)&lt;/li&gt;
+      &lt;li&gt;SVM (Support Vector Machine)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;RNTN (Recursive Neural Tensor Network)&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;RNN (Recursive Neural Network)&lt;/li&gt;
+      &lt;li&gt;MV-RNN (Matrix-Vector RNN)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The last method in the list is claimed to have the better performance than the others. &lt;sup id=&quot;fnref:2&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;corenlp-library&quot;&gt;CoreNLP library&lt;/h3&gt;
+&lt;p&gt;As you may already know there is great open source library for natural language processing named &lt;a href=&quot;http://nlp.stanford.edu/software/corenlp.shtml&quot;&gt;CoreNLP&lt;/a&gt; which includes RNTN for sentiment analysis. The library is written in Java, but there are also some wrappers for other languages.&lt;/p&gt;
+
+&lt;h3 id=&quot;how-to-use-it&quot;&gt;How to use it&lt;/h3&gt;
+
+&lt;p&gt;Let’s dive into details on how to use CoreNLP in Scala. Since Scala is compatible with Java, you can simply import CoreNLP library in your Scala project. To include library and models for sentiment component in your project add the following dependency to the sbt build file:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;n&quot;&gt;libraryDependencies&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;edu.stanford.nlp&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;stanford-corenlp&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;3.3.1&amp;quot;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;artifacts&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Artifact&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;stanford-corenlp&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;models&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Artifact&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;stanford-corenlp&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;When doing analysis with CoreNLP you get fine grained predictions as a result (i.e. 5 classes: very positive, positive, neutral, negative, very negative) which are less accurate than Positive/Neutral/Negative ones. In the code below, we create three categories and map result into them in the end of &lt;code&gt;getSentiment&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;java.util.Properties&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;edu.stanford.nlp.pipeline.StanfordCoreNLP&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;edu.stanford.nlp.ling.CoreAnnotations&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;edu.stanford.nlp.sentiment.SentimentCoreAnnotations&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;edu.stanford.nlp.neural.rnn.RNNCoreAnnotations&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;object&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;SentimentCategory&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Enumeration&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;SentimentCategory&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Int&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Negative&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Neutral&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Positive&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;trait&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;SentimentTools&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;props&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Properties&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;props&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;setProperty&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;annotators&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;tokenize, ssplit, parse, sentiment&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pipeline&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;StanfordCoreNLP&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;props&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getSentiment&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;SentimentCategory&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mainSentiment&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;longest&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;annotation&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pipeline&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;annotation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;classOf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;CoreAnnotations.SentencesAnnotation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;it&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;iterator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;it&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hasNext&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+          &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sentence&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;it&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+          &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tree&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sentence&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;classOf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;SentimentCoreAnnotations.AnnotatedTree&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt;
+          &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sentiment&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;RNNCoreAnnotations&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getPredictedClass&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tree&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+          &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;partText&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sentence&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;toString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+          &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;partText&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;longest&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;mainSentiment&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sentiment&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;longest&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;partText&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+          &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;SentimentCategory._&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mainSentiment&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;nc&quot;&gt;Negative&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mainSentiment&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;nc&quot;&gt;Neutral&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;
+        &lt;span class=&quot;nc&quot;&gt;Positive&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;footnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:1&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;http://www.morganclaypool.com/doi/abs/10.2200/S00416ED1V01Y201204HLT016&quot;&gt;Sentiment Analysis and Opinion Mining Synthesis Lectures on Human Language Technologies&lt;/a&gt; &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:2&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;http://nlp.stanford.edu/~socherr/EMNLP2013_RNTN.pdf&quot;&gt;Recursive Deep Models for Semantic Compositionality Over a Sentiment Treebank&lt;/a&gt; &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;
+
+  &lt;p&gt;&lt;a href=&quot;http://www.kostyaev.me/article/Sentiment%20analysis&quot;&gt;Sentiment analysis with CoreNLP&lt;/a&gt; was originally published by Kostyaev Dmitry at &lt;a href=&quot;http://www.kostyaev.me&quot;&gt;Dmitry Kostyaev&lt;/a&gt; on June 21, 2014.&lt;/p&gt;</content>
+</entry>
+
+
+<entry>
+  <title type="html"><![CDATA[Apache Spark Review]]></title>
+  <link>http://www.kostyaev.me/article/Apache%20Spark</link>
+  <id>http://www.kostyaev.me/article/Apache Spark</id>
+  <updated>2014-03-20T00:00:00-00:00</updated>
+  <published>2014-03-20T00:00:00+04:00</published>
+  
+  <author>
+    <name>Kostyaev Dmitry</name>
+    <uri>http://www.kostyaev.me</uri>
+    <email>dmitry@kostyaev.me</email>
+  </author>
+  <content type="html">&lt;p&gt;Spark is a fast and general-purpose cluster computing system. It provides high-level APIs in Java, Scala and Python, and an optimized engine that supports general execution graphs. It also supports a rich set of higher-level tools including Spark SQL for SQL and structured data processing, MLlib for machine learning, GraphX for graph processing, and Spark Streaming.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://www.kostyaev.me/images/spark.png&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;graphx&quot;&gt;GraphX&lt;/h3&gt;
+&lt;p&gt;From social networks and targeted advertising to protein modeling and astrophysics, big graphs capture the structure in data and are central to the recent advances in machine learning and data mining. Directly applying existing data-parallel tools (e.g., Hadoop and Spark) to graph computation tasks can be cumbersome and inefficient. The need for intuitive, scalable tools for graph computation has lead to the development of new graph-parallel systems (e.g., Pregel and GraphLab) which are designed to efficiently execute graph algorithms. Unfortunately, these systems do not address the challenges of graph construction and transformation and provide limited fault-tolerance and support for interactive analysis.
+The GraphX project combines the advantages of both data-parallel and graph-parallel systems by efficiently expressing graph computation within the Spark framework.&lt;/p&gt;
+
+&lt;h3 id=&quot;spark-streaming&quot;&gt;Spark Streaming&lt;/h3&gt;
+&lt;p&gt;Spark Streaming is an extension of the core Spark API that enables scalable, high-throughput, fault-tolerant stream processing of live data streams. Data can be ingested from many sources like Kafka, Flume, Twitter, ZeroMQ, Kinesis or TCP sockets can be processed using complex algorithms expressed with high-level functions like map, reduce, join and window. Finally, processed data can be pushed out to filesystems, databases, and live dashboards. In fact, you can apply Spark’s machine learning and graph processing algorithms on data streams.
+&lt;img src=&quot;https://spark.apache.org/docs/latest/img/streaming-arch.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Internally, it works as follows. Spark Streaming receives live input data streams and divides the data into batches, which are then processed by the Spark engine to generate the final stream of results in batches.
+&lt;img src=&quot;https://spark.apache.org/docs/latest/img/streaming-flow.png&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;mllib&quot;&gt;MLlib&lt;/h3&gt;
+&lt;p&gt;MLlib is Spark’s scalable machine learning library consisting of common learning algorithms and utilities, including classification, regression, clustering, collaborative filtering, dimensionality reduction, as well as underlying optimization primitives, as outlined below:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Data types&lt;/li&gt;
+  &lt;li&gt;Basic statistics
+    &lt;ul&gt;
+      &lt;li&gt;summary statistics&lt;/li&gt;
+      &lt;li&gt;correlations&lt;/li&gt;
+      &lt;li&gt;stratified sampling&lt;/li&gt;
+      &lt;li&gt;hypothesis testing&lt;/li&gt;
+      &lt;li&gt;random data generation&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Classification and regression
+    &lt;ul&gt;
+      &lt;li&gt;linear models (SVMs, logistic regression, linear regression)&lt;/li&gt;
+      &lt;li&gt;naive Bayes&lt;/li&gt;
+      &lt;li&gt;decision trees&lt;/li&gt;
+      &lt;li&gt;ensembles of trees (Random Forests and Gradient-Boosted Trees)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Collaborative filtering
+    &lt;ul&gt;
+      &lt;li&gt;alternating least squares (ALS)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Clustering
+    &lt;ul&gt;
+      &lt;li&gt;k-means&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Dimensionality reduction
+    &lt;ul&gt;
+      &lt;li&gt;singular value decomposition (SVD)&lt;/li&gt;
+      &lt;li&gt;principal component analysis (PCA)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Feature extraction and transformation&lt;/li&gt;
+  &lt;li&gt;Optimization (developer)
+    &lt;ul&gt;
+      &lt;li&gt;stochastic gradient descent&lt;/li&gt;
+      &lt;li&gt;limited-memory BFGS (L-BFGS)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;spark-sql&quot;&gt;Spark SQL&lt;/h3&gt;
+&lt;p&gt;Spark SQL brings native support for SQL to Spark and streamlines the process of querying data stored both in RDDs (Spark’s distributed datasets) and in external sources. Spark SQL conveniently blurs the lines between RDDs and relational tables. Unifying these powerful abstractions makes it easy for developers to intermix SQL commands querying external data with complex analytics, all within in a single application.&lt;/p&gt;
+
+
+  &lt;p&gt;&lt;a href=&quot;http://www.kostyaev.me/article/Apache%20Spark&quot;&gt;Apache Spark Review&lt;/a&gt; was originally published by Kostyaev Dmitry at &lt;a href=&quot;http://www.kostyaev.me&quot;&gt;Dmitry Kostyaev&lt;/a&gt; on March 20, 2014.&lt;/p&gt;</content>
+</entry>
+
+</feed>

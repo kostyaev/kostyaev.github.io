@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+     
+    <url>
+        <loc>http://www.kostyaev.me/</loc>
+    </url> 
+    <url>
+        <loc>http://www.kostyaev.me/categories</loc>
+    </url> 
+    <url>
+        <loc>http://www.kostyaev.me/tags</loc>
+    </url>
+    
+    
+    <url>
+        <loc>http://www.kostyaev.me/article/Data%20Streams%20Review</loc>
+    </url>
+    
+    <url>
+        <loc>http://www.kostyaev.me/article/Sentiment%20analysis</loc>
+    </url>
+    
+    <url>
+        <loc>http://www.kostyaev.me/article/Apache%20Spark</loc>
+    </url>
+    
+</urlset>

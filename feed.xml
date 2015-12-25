@@ -4,7 +4,7 @@
 <generator uri="https://github.com/mojombo/jekyll">Jekyll</generator>
 <link rel="self" type="application/atom+xml" href="http://www.kostyaev.me/feed.xml" />
 <link rel="alternate" type="text/html" href="http://www.kostyaev.me" />
-<updated>2015-12-25T00:40:54+03:00</updated>
+<updated>2015-12-25T10:05:48+03:00</updated>
 <id>http://www.kostyaev.me/</id>
 <author>
   <name>Kostyaev Dmitry</name>
@@ -206,88 +206,6 @@ Pull when producer is faster&lt;/p&gt;
 &lt;/div&gt;
 
   &lt;p&gt;&lt;a href=&quot;http://www.kostyaev.me/article/Sentiment%20analysis&quot;&gt;Sentiment analysis with CoreNLP&lt;/a&gt; was originally published by Kostyaev Dmitry at &lt;a href=&quot;http://www.kostyaev.me&quot;&gt;Dmitry Kostyaev&lt;/a&gt; on June 21, 2014.&lt;/p&gt;</content>
-</entry>
-
-
-<entry>
-  <title type="html"><![CDATA[Apache Spark Review]]></title>
-  <link>http://www.kostyaev.me/article/Apache%20Spark</link>
-  <id>http://www.kostyaev.me/article/Apache Spark</id>
-  <updated>2014-03-20T00:00:00-00:00</updated>
-  <published>2014-03-20T00:00:00+04:00</published>
-  
-  <author>
-    <name>Kostyaev Dmitry</name>
-    <uri>http://www.kostyaev.me</uri>
-    <email>dmitry@kostyaev.me</email>
-  </author>
-  <content type="html">&lt;p&gt;Spark is a fast and general-purpose cluster computing system. It provides high-level APIs in Java, Scala and Python, and an optimized engine that supports general execution graphs. It also supports a rich set of higher-level tools including Spark SQL for SQL and structured data processing, MLlib for machine learning, GraphX for graph processing, and Spark Streaming.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://www.kostyaev.me/images/spark.png&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;graphx&quot;&gt;GraphX&lt;/h3&gt;
-&lt;p&gt;From social networks and targeted advertising to protein modeling and astrophysics, big graphs capture the structure in data and are central to the recent advances in machine learning and data mining. Directly applying existing data-parallel tools (e.g., Hadoop and Spark) to graph computation tasks can be cumbersome and inefficient. The need for intuitive, scalable tools for graph computation has lead to the development of new graph-parallel systems (e.g., Pregel and GraphLab) which are designed to efficiently execute graph algorithms. Unfortunately, these systems do not address the challenges of graph construction and transformation and provide limited fault-tolerance and support for interactive analysis.
-The GraphX project combines the advantages of both data-parallel and graph-parallel systems by efficiently expressing graph computation within the Spark framework.&lt;/p&gt;
-
-&lt;h3 id=&quot;spark-streaming&quot;&gt;Spark Streaming&lt;/h3&gt;
-&lt;p&gt;Spark Streaming is an extension of the core Spark API that enables scalable, high-throughput, fault-tolerant stream processing of live data streams. Data can be ingested from many sources like Kafka, Flume, Twitter, ZeroMQ, Kinesis or TCP sockets can be processed using complex algorithms expressed with high-level functions like map, reduce, join and window. Finally, processed data can be pushed out to filesystems, databases, and live dashboards. In fact, you can apply Spark’s machine learning and graph processing algorithms on data streams.
-&lt;img src=&quot;https://spark.apache.org/docs/latest/img/streaming-arch.png&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Internally, it works as follows. Spark Streaming receives live input data streams and divides the data into batches, which are then processed by the Spark engine to generate the final stream of results in batches.
-&lt;img src=&quot;https://spark.apache.org/docs/latest/img/streaming-flow.png&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;mllib&quot;&gt;MLlib&lt;/h3&gt;
-&lt;p&gt;MLlib is Spark’s scalable machine learning library consisting of common learning algorithms and utilities, including classification, regression, clustering, collaborative filtering, dimensionality reduction, as well as underlying optimization primitives, as outlined below:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Data types&lt;/li&gt;
-  &lt;li&gt;Basic statistics
-    &lt;ul&gt;
-      &lt;li&gt;summary statistics&lt;/li&gt;
-      &lt;li&gt;correlations&lt;/li&gt;
-      &lt;li&gt;stratified sampling&lt;/li&gt;
-      &lt;li&gt;hypothesis testing&lt;/li&gt;
-      &lt;li&gt;random data generation&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Classification and regression
-    &lt;ul&gt;
-      &lt;li&gt;linear models (SVMs, logistic regression, linear regression)&lt;/li&gt;
-      &lt;li&gt;naive Bayes&lt;/li&gt;
-      &lt;li&gt;decision trees&lt;/li&gt;
-      &lt;li&gt;ensembles of trees (Random Forests and Gradient-Boosted Trees)&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Collaborative filtering
-    &lt;ul&gt;
-      &lt;li&gt;alternating least squares (ALS)&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Clustering
-    &lt;ul&gt;
-      &lt;li&gt;k-means&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Dimensionality reduction
-    &lt;ul&gt;
-      &lt;li&gt;singular value decomposition (SVD)&lt;/li&gt;
-      &lt;li&gt;principal component analysis (PCA)&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Feature extraction and transformation&lt;/li&gt;
-  &lt;li&gt;Optimization (developer)
-    &lt;ul&gt;
-      &lt;li&gt;stochastic gradient descent&lt;/li&gt;
-      &lt;li&gt;limited-memory BFGS (L-BFGS)&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;spark-sql&quot;&gt;Spark SQL&lt;/h3&gt;
-&lt;p&gt;Spark SQL brings native support for SQL to Spark and streamlines the process of querying data stored both in RDDs (Spark’s distributed datasets) and in external sources. Spark SQL conveniently blurs the lines between RDDs and relational tables. Unifying these powerful abstractions makes it easy for developers to intermix SQL commands querying external data with complex analytics, all within in a single application.&lt;/p&gt;
-
-
-  &lt;p&gt;&lt;a href=&quot;http://www.kostyaev.me/article/Apache%20Spark&quot;&gt;Apache Spark Review&lt;/a&gt; was originally published by Kostyaev Dmitry at &lt;a href=&quot;http://www.kostyaev.me&quot;&gt;Dmitry Kostyaev&lt;/a&gt; on March 20, 2014.&lt;/p&gt;</content>
 </entry>
 
 </feed>

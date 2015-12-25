@@ -14,14 +14,6 @@
 		  "url"        : "http://www.kostyaev.me/article/Sentiment%20analysis",
 		  "date"       : "2014-06-21 00:00:00 +0400",
 		  "shortdate"  : "June 21, 2014"
-		} ,
-	
-		{
-		  "title"      : "Apache Spark Review",
-		  "category"   : "article",
-		  "url"        : "http://www.kostyaev.me/article/Apache%20Spark",
-		  "date"       : "2014-03-20 00:00:00 +0400",
-		  "shortdate"  : "March 20, 2014"
 		} 
 	
 ]

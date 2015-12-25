@@ -1,11 +1,6 @@
 callback([
 
   {
-    "text": "Apache Spark Review",
-    "href": "http://www.kostyaev.me/article/Apache%20Spark"
-  } ,
-
-  {
     "text": "Sentiment analysis with CoreNLP",
     "href": "http://www.kostyaev.me/article/Sentiment%20analysis"
   } ,

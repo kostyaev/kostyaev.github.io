@@ -1,6 +1,14 @@
 [
 	
 		{
+		  "title"      : "Creating multilabel training set for Caffe",
+		  "category"   : "article",
+		  "url"        : "http://www.kostyaev.me/article/Multilabel%20Dataset",
+		  "date"       : "2016-02-17 00:00:00 +0300",
+		  "shortdate"  : "February 17, 2016"
+		} ,
+	
+		{
 		  "title"      : "Data Streams Review",
 		  "category"   : "article",
 		  "url"        : "http://www.kostyaev.me/article/Data%20Streams%20Review",

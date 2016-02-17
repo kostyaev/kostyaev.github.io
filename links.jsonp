@@ -8,6 +8,11 @@ callback([
   {
     "text": "Data Streams Review",
     "href": "http://www.kostyaev.me/article/Data%20Streams%20Review"
+  } ,
+
+  {
+    "text": "Creating multilabel training set for Caffe",
+    "href": "http://www.kostyaev.me/article/Multilabel%20Dataset"
   } 
 
 ])

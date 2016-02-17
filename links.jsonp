@@ -11,7 +11,7 @@ callback([
   } ,
 
   {
-    "text": "Creating multilabel training set for Caffe",
+    "text": "Preparing multilabel dataset for training ConvNet with Caffe",
     "href": "http://www.kostyaev.me/article/Multilabel%20Dataset"
   } 
 

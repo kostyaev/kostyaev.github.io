@@ -4,7 +4,7 @@
 <generator uri="https://github.com/mojombo/jekyll">Jekyll</generator>
 <link rel="self" type="application/atom+xml" href="http://www.kostyaev.me/feed.xml" />
 <link rel="alternate" type="text/html" href="http://www.kostyaev.me" />
-<updated>2016-03-03T03:34:27+03:00</updated>
+<updated>2016-03-03T03:38:28+03:00</updated>
 <id>http://www.kostyaev.me/</id>
 <author>
   <name>Kostyaev Dmitry</name>
@@ -15,8 +15,8 @@
 
 <entry>
   <title type="html"><![CDATA[Why top-5 error is more fair metric than top-1 for ILSVRC models]]></title>
-  <link>http://www.kostyaev.me/article/why_top-5_error_is_more_fair__metric_than_top-1_for_ilsvrc_models</link>
-  <id>http://www.kostyaev.me/article/why_top-5_error_is_more_fair__metric_than_top-1_for_ilsvrc_models</id>
+  <link>http://www.kostyaev.me/article/Why%20top-5%20error%20is%20more%20fair%20metric%20than%20top-1%20for%20ILSVRC%20models</link>
+  <id>http://www.kostyaev.me/article/Why top-5 error is more fair metric than top-1 for ILSVRC models</id>
   <published>2016-03-01T00:00:00+03:00</published>
   <updated>2016-03-01T00:00:00+03:00</updated>
   <author>
@@ -41,7 +41,7 @@
 
 &lt;p&gt;The major problem with the dataset is that for many of the images we can’t say precisely if a category A or a category B describes it the best and the model in such situation is penalized during the training for the the mismatch between the predicted A category and category B given as ground truth. So even if the image from the evaluation set is better in the sense of ambiguity but still can be described with the multiple labels, it will be harder for the network to determine the pravailing label because the training dataset doesn’t train it to do so very well. And this explain such a big margin between top-1 and top-5 errors.&lt;/p&gt;
 
-  &lt;p&gt;&lt;a href=&quot;http://www.kostyaev.me/article/why_top-5_error_is_more_fair__metric_than_top-1_for_ilsvrc_models&quot;&gt;Why top-5 error is more fair metric than top-1 for ILSVRC models&lt;/a&gt; was originally published by Kostyaev Dmitry at &lt;a href=&quot;http://www.kostyaev.me&quot;&gt;Dmitry Kostyaev&lt;/a&gt; on March 01, 2016.&lt;/p&gt;</content>
+  &lt;p&gt;&lt;a href=&quot;http://www.kostyaev.me/article/Why%20top-5%20error%20is%20more%20fair%20metric%20than%20top-1%20for%20ILSVRC%20models&quot;&gt;Why top-5 error is more fair metric than top-1 for ILSVRC models&lt;/a&gt; was originally published by Kostyaev Dmitry at &lt;a href=&quot;http://www.kostyaev.me&quot;&gt;Dmitry Kostyaev&lt;/a&gt; on March 01, 2016.&lt;/p&gt;</content>
 </entry>
 
 

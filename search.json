@@ -1,7 +1,7 @@
 [
 	
 		{
-		  "title"      : "Why top-5 error is more fair metric than top-1 for ImageNet classification task",
+		  "title"      : "Why top-5 error is more fair metric than top-1 for ILSVRC models",
 		  "category"   : "article",
 		  "url"        : "http://www.kostyaev.me/article/Why%20top-5%20error%20is%20more%20fair%20metric%20than%20top-1%20for%20ImageNet%20classification%20task",
 		  "date"       : "2016-03-01 00:00:00 +0300",

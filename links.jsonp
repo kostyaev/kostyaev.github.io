@@ -18,6 +18,11 @@ callback([
   {
     "text": "Why top-5 error is more fair metric than top-1 for ILSVRC models",
     "href": "http://www.kostyaev.me/article/Why%20top-5%20error%20is%20more%20fair%20metric%20than%20top-1%20for%20ImageNet%20classification%20task"
+  } ,
+
+  {
+    "text": "Semantic clustering of images",
+    "href": "http://www.kostyaev.me/article/Semantic%20Clustering%20of%20Images"
   } 
 
 ])

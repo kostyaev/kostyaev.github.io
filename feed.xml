@@ -4,13 +4,54 @@
 <generator uri="https://github.com/mojombo/jekyll">Jekyll</generator>
 <link rel="self" type="application/atom+xml" href="http://www.kostyaev.me/feed.xml" />
 <link rel="alternate" type="text/html" href="http://www.kostyaev.me" />
-<updated>2016-03-07T01:03:34+03:00</updated>
+<updated>2016-03-17T03:15:49+03:00</updated>
 <id>http://www.kostyaev.me/</id>
 <author>
   <name>Kostyaev Dmitry</name>
   <uri>http://www.kostyaev.me/</uri>
   <email>dmitry@kostyaev.me</email>
 </author>
+
+
+<entry>
+  <title type="html"><![CDATA[Semantic clustering of images]]></title>
+  <link>http://www.kostyaev.me/article/Semantic%20Clustering%20of%20Images</link>
+  <id>http://www.kostyaev.me/article/Semantic Clustering of Images</id>
+  <published>2016-03-16T00:00:00+03:00</published>
+  <updated>2016-03-16T00:00:00+03:00</updated>
+  <author>
+    <name>Kostyaev Dmitry</name>
+    <uri>http://www.kostyaev.me</uri>
+    <email>dmitry@kostyaev.me</email>
+  </author>
+  <content type="html">&lt;p&gt;Recent studies in the field of computer vision have shown the abilities of deep convolutional neural networks to learn high level image representation. These representations have reach semantic and can be very handy in various visual tasks. One of such task that can make use of high level features is semantic clusterization. Let’s find some pictures in Google Web Search, feed them to CNN and apply k-means to the extracted feautures and take the biggest clusters, here is what I got for different queries :&lt;/p&gt;
+
+&lt;p&gt;Query “extreme”:
+&lt;img src=&quot;../../images/semantic/extreme_grid.png&quot; alt=&quot;extreme&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;On the left is the query result and on the right - some groups of images. It’s clear that pictures in the same group are closer in semantic than images across. Here we got two clusters, first for the American rock band and the second for some extreme activity.&lt;/p&gt;
+
+&lt;p&gt;Query “destruction”:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/semantic/distruction_grid.png&quot; alt=&quot;distruction&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Now we have three clusters and arguably three slightly different meanings: an explosion, destroyed buildings and a forest fire. Let’s try a query that for sure should show images with different semantic.&lt;/p&gt;
+
+&lt;p&gt;Query “apple”:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/semantic/apple_grid.png&quot; alt=&quot;apple&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;As you might guess Google will return results containing some Apple products and we can automatically move images with different meaning to their semantic group by applying clustering algorithm on CNN codes. Having multiple images in top-k biggest clusters we can pull out centroids and use them as different representation of the same concept. Let’s do this for our examples:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/semantic/centroids.png&quot; alt=&quot;centroids&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Here centroids of the “distruction” clusters can be thought as different representations of a destruction. There are many other applications, for example, semantic clusters can help to find the most popular meaning for some text term. We can also apply clustering to filter duplicates as they tend to fall into the same groups, in this case we need to select images from different groups.&lt;/p&gt;
+
+&lt;p&gt;So coming to conclusion, deep convolutional neural networks can produce very good abstractions that can be further used in many visual recognition tasks that hardly be possible without them.&lt;/p&gt;
+
+
+  &lt;p&gt;&lt;a href=&quot;http://www.kostyaev.me/article/Semantic%20Clustering%20of%20Images&quot;&gt;Semantic clustering of images&lt;/a&gt; was originally published by Kostyaev Dmitry at &lt;a href=&quot;http://www.kostyaev.me&quot;&gt;Dmitry Kostyaev&lt;/a&gt; on March 16, 2016.&lt;/p&gt;</content>
+</entry>
 
 
 <entry>

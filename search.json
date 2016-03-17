@@ -1,6 +1,14 @@
 [
 	
 		{
+		  "title"      : "Semantic clustering of images",
+		  "category"   : "article",
+		  "url"        : "http://www.kostyaev.me/article/Semantic%20Clustering%20of%20Images",
+		  "date"       : "2016-03-16 00:00:00 +0300",
+		  "shortdate"  : "March 16, 2016"
+		} ,
+	
+		{
 		  "title"      : "Why top-5 error is more fair metric than top-1 for ILSVRC models",
 		  "category"   : "article",
 		  "url"        : "http://www.kostyaev.me/article/Why%20top-5%20error%20is%20more%20fair%20metric%20than%20top-1%20for%20ImageNet%20classification%20task",

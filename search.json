@@ -25,14 +25,6 @@
 		} ,
 	
 		{
-		  "title"      : "Data Streams Review",
-		  "category"   : "article",
-		  "url"        : "http://www.kostyaev.me/article/Data%20Streams%20Review",
-		  "date"       : "2014-07-27 00:00:00 +0400",
-		  "shortdate"  : "July 27, 2014"
-		} ,
-	
-		{
 		  "title"      : "Sentiment analysis with CoreNLP",
 		  "category"   : "article",
 		  "url"        : "http://www.kostyaev.me/article/Sentiment%20analysis",

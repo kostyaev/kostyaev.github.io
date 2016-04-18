@@ -6,11 +6,6 @@ callback([
   } ,
 
   {
-    "text": "Data Streams Review",
-    "href": "http://www.kostyaev.me/article/Data%20Streams%20Review"
-  } ,
-
-  {
     "text": "Preparing multilabel dataset for training ConvNet with Caffe",
     "href": "http://www.kostyaev.me/article/Multilabel%20Dataset"
   } ,

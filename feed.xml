@@ -4,7 +4,7 @@
 <generator uri="https://github.com/mojombo/jekyll">Jekyll</generator>
 <link rel="self" type="application/atom+xml" href="http://www.kostyaev.me/feed.xml" />
 <link rel="alternate" type="text/html" href="http://www.kostyaev.me" />
-<updated>2016-03-17T03:24:31+03:00</updated>
+<updated>2016-04-19T01:10:31+03:00</updated>
 <id>http://www.kostyaev.me/</id>
 <author>
   <name>Kostyaev Dmitry</name>
@@ -41,7 +41,7 @@
 
 &lt;p&gt;&lt;img src=&quot;../../images/semantic/apple_grid.png&quot; alt=&quot;apple&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;As you might guess Google will return results containing some Apple products and we can automatically move images with different meaning to their semantic group by applying clustering algorithm on CNN codes. Having multiple images in top-k biggest clusters we can pull out centroids and use them as different representation of the same concept. Let’s do this for our examples:&lt;/p&gt;
+&lt;p&gt;As you might guess Google will return results containing some Apple products andd we can automatically move images with different meaning to their semantic group by applying clustering algorithm on CNN codes. Having multiple images in top-k biggest clusters we can pull out centroids and use them as different representation of the same concept. Let’s do this for our examples:&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;../../images/semantic/centroids.png&quot; alt=&quot;centroids&quot; /&gt;&lt;/p&gt;
 
@@ -136,87 +136,6 @@ This script also shuffles the data, resizes images preserving an aspect ratio an
 If error occures (e.g if some image file is corrupted or missing), the procedure skips the corrupted image and its label and continues the progress.&lt;/p&gt;
 
   &lt;p&gt;&lt;a href=&quot;http://www.kostyaev.me/article/Multilabel%20Dataset&quot;&gt;Preparing multilabel dataset for training ConvNet with Caffe&lt;/a&gt; was originally published by Kostyaev Dmitry at &lt;a href=&quot;http://www.kostyaev.me&quot;&gt;Dmitry Kostyaev&lt;/a&gt; on February 17, 2016.&lt;/p&gt;</content>
-</entry>
-
-
-<entry>
-  <title type="html"><![CDATA[Data Streams Review]]></title>
-  <link>http://www.kostyaev.me/article/Data%20Streams%20Review</link>
-  <id>http://www.kostyaev.me/article/Data Streams Review</id>
-  <updated>2014-07-27T00:00:00-00:00</updated>
-  <published>2014-07-27T00:00:00+04:00</published>
-  
-  <author>
-    <name>Kostyaev Dmitry</name>
-    <uri>http://www.kostyaev.me</uri>
-    <email>dmitry@kostyaev.me</email>
-  </author>
-  <content type="html">&lt;h3 id=&quot;what-is-a-stream&quot;&gt;What is a Stream?&lt;/h3&gt;
-&lt;p&gt;In general stream is an ephemeral flow of data, possibly unbounded in size. More specifically, it is an active process, that involves moving and transforming data. Nice and fun explanation I’ve found for streams lies &lt;a href=&quot;http://howtonode.org/streams-explained&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h3 id=&quot;when-do-you-need-streams&quot;&gt;When do you need Streams?&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;Bulk data transfer.&lt;/li&gt;
-  &lt;li&gt;Real-time data sources.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;reactive-streams&quot;&gt;Reactive Streams&lt;/h3&gt;
-&lt;p&gt;Reactive Streams is an initiative to provide a standard for asynchronous stream processing with non-blocking back pressure on the JVM. &lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt; Lack of backpressure for streaming data means if there’s a step that’s producing faster than the next step can consume, eventually the entire system will crash. If you have a TCP connection with orders coming in and you need to perform some processing to it before passing it on to another connection, you need to make sure you aren’t pulling things off the inbound connection faster than you are able to send to the outbound connection. If you don’t, then you’ll risk blowing the JVM up with an OutOfMemoryError. &lt;sup id=&quot;fnref:2&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;streams-specification-and-implementations&quot;&gt;Streams specification and implementations:&lt;/h3&gt;
-&lt;p&gt;&lt;a href=&quot;https://github.com/reactive-streams/reactive-streams&quot;&gt;Streams specification&lt;/a&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Akka streams &lt;a href=&quot;http://akka.io/docs/&quot;&gt;(docs)&lt;/a&gt; &lt;a href=&quot;https://github.com/typesafehub/activator-akka-stream-scala#master&quot;&gt;(template)&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;RxJava &lt;a href=&quot;https://github.com/ReactiveX/RxJava&quot;&gt;(github)&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;Reactor composable &lt;a href=&quot;https://github.com/reactor/reactor&quot;&gt;(github)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;core-concepts&quot;&gt;Core concepts&lt;/h3&gt;
-
-&lt;h4 id=&quot;upstream&quot;&gt;Upstream&lt;/h4&gt;
-&lt;p&gt;The end where data comes from.&lt;/p&gt;
-
-&lt;h4 id=&quot;downstream&quot;&gt;Downstream&lt;/h4&gt;
-&lt;p&gt;The end where data comes to.&lt;/p&gt;
-
-&lt;h4 id=&quot;back-pressure&quot;&gt;Back-pressure&lt;/h4&gt;
-&lt;p&gt;A means of flow-control, a way for consumers of data to notify a producer about their current availability, effectively slowing down the upstream source to match their consumption speeds. In the context of Akka Streams back-pressure is always understood as non-blocking and asynchronous&lt;/p&gt;
-
-&lt;h4 id=&quot;push-behavior&quot;&gt;Push behavior&lt;/h4&gt;
-&lt;p&gt;Behavior in which systems take events and push them through a signal network to achieve a result.&lt;/p&gt;
-
-&lt;h4 id=&quot;pull-behavior&quot;&gt;Pull behavior&lt;/h4&gt;
-&lt;p&gt;Behavior in which systems wait until the result is demanded, and work backwards through the network to retrieve the value. demanded.&lt;/p&gt;
-
-&lt;h4 id=&quot;dynamic-push-pull&quot;&gt;Dynamic Push-Pull&lt;/h4&gt;
-&lt;p&gt;Push behavior when consumer is faster
-Pull when producer is faster&lt;/p&gt;
-
-&lt;h4 id=&quot;codec&quot;&gt;Codec&lt;/h4&gt;
-&lt;p&gt;Component that converts a stream from one type to another.&lt;/p&gt;
-
-&lt;h4 id=&quot;source&quot;&gt;Source&lt;/h4&gt;
-&lt;p&gt;A processing stage with exactly one output, emitting data elements whenever downstream processing stages are ready to receive them.&lt;/p&gt;
-
-&lt;h4 id=&quot;sink&quot;&gt;Sink&lt;/h4&gt;
-&lt;p&gt;A processing stage with exactly one input, requesting and accepting data elements possibly slowing down the upstream producer of elements&lt;/p&gt;
-
-&lt;h4 id=&quot;flow&quot;&gt;Flow&lt;/h4&gt;
-&lt;p&gt;A processing stage which has exactly one input and output, which connects its up- and downstreams by transforming the data elements flowing through it.&lt;/p&gt;
-
-&lt;div class=&quot;footnotes&quot;&gt;
-  &lt;ol&gt;
-    &lt;li id=&quot;fn:1&quot;&gt;
-      &lt;p&gt;&lt;a href=&quot;http://www.reactive-streams.org&quot;&gt;http://www.reactive-streams.org&lt;/a&gt; &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-    &lt;li id=&quot;fn:2&quot;&gt;
-      &lt;p&gt;&lt;a href=&quot;http://readwrite.com/2014/04/17/real-time-data-streaming-viktor-klang-typesafe-reactivestreams-jvm&quot;&gt;Real-Time Data Streaming Gets Standardized&lt;/a&gt; &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-  &lt;/ol&gt;
-&lt;/div&gt;
-
-  &lt;p&gt;&lt;a href=&quot;http://www.kostyaev.me/article/Data%20Streams%20Review&quot;&gt;Data Streams Review&lt;/a&gt; was originally published by Kostyaev Dmitry at &lt;a href=&quot;http://www.kostyaev.me&quot;&gt;Dmitry Kostyaev&lt;/a&gt; on July 27, 2014.&lt;/p&gt;</content>
 </entry>
 
 

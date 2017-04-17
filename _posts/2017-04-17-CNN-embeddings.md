@@ -7,7 +7,7 @@ comments: true
 share: true
 ---
 
-Quite a while ago I worked on image retrieval and performed a little experiment with algebraic operations on image embeddings extracted from convolutional networks. I downloaded a set of publicly available photos, extracted feature vectors using pretrained ResNet 50 and applied cosine distance KNN search using linear combinations of query vectors:
+Quite a while ago I worked on image retrieval and made a little experiment with algebraic operations on image embeddings extracted from convolutional network. I downloaded a set of publicly available photos, extracted feature vectors using pretrained ResNet 50 and applied cosine distance KNN search using linear combinations of the following query vectors:
 
  - [man](http://static1.squarespace.com/static/55366165e4b0e488db74b92b/572cd5bbc2ea5104e50cbf8c/572cd5be7c65e48ce9293423/1462556096928/20160229_manoscar9.jpg)
  - [woman](https://s-media-cache-ak0.pinimg.com/736x/e2/73/e7/e273e787cef28c8fe2eb359a97ae0f11.jpg)

@@ -1,488 +1,746 @@
-<!DOCTYPE html>
-<html>
+---
+layout: home
+title: Latest Posts
+description: "Your personal blog."
+headline: Your Headline
+tags: [tags]
+---
 
-<head>
-<meta charset="utf-8">
-<title>Latest Posts &#8211; Dmitry Kostyaev</title>
-<meta name="description" content="The personal blog of Dmitry Kostyaev">
-<meta name="keywords" content="Dmitry, Kostyaev, mephi, java, scala, developer">
+{% if site.paginate %}
+	{% for post in paginator.posts %}
+		{% if site.wpm %}
+			{% assign readtime = post.content | strip_html | number_of_words | append: '.0' | divided_by:site.wpm %}
+		{% else %}
+			{% assign readtime = post.content | strip_html | number_of_words | append: '.0' | divided_by:180 %}
+		{% endif %}
 
-<!-- Twitter Cards -->
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://www.kostyaev.me/images/java-logo-lambda.png">
-<meta name="twitter:title" content="Latest Posts">
-<meta name="twitter:description" content="The personal blog of Dmitry Kostyaev">
-<meta name="twitter:creator" content="@virtuozz0">
+		{% assign modifiedtime = post.modified | date: "%Y%m%d" %}
+		{% assign posttime = post.date | date: "%Y%m%d" %}
 
-<!-- Open Graph -->
-<meta property="og:locale" content="en_US">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Latest Posts">
-<meta property="og:description" content="The personal blog of Dmitry Kostyaev">
-<meta property="og:url" content="http://www.kostyaev.me/index.html">
-<meta property="og:site_name" content="Dmitry Kostyaev">
-<meta property="og:image" content="http://www.kostyaev.me/images/coworking.jpg">
+		{% if post.type == 'quote' %}
+<div class="row">
+	<article class="post col-md-10 col-md-offset-1">
+		<header class="post-header">
+			<h2 class="post-title text-center super lighter">
+				<a href="{{ post.url }}"><i class="fa fa-quote-left"></i> {{ post.excerpt | strip_html }}</a>
+	        </h2>
+	        <p class="light small text-center">
+	        	Share this Quote
+	        </p>
+	        <ul class="social-mini text-center">
+	        	<li>
+	            	<a href="https://twitter.com/intent/tweet?text=&quot;{{ post.title }}&quot;%20{{ post.url }}%20via%20&#64;{{ site.author.twitter }}"
+	                	onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;" data-toggle="tooltip" title="Share on Twitter">
+	                    <i class="fa fa-twitter"></i>
+	                </a>
+	            </li>
+	            <li>
+	            	<a  href="https://www.facebook.com/sharer/sharer.php?u={{ post.url }}"
+	                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;" data-toggle="tooltip" title="Share on Facebook">
+	                    <i class="fa fa-facebook"></i>
+	                </a>
+	            </li>
+	            <li>
+	                <a href="https://plus.google.com/share?url={{ post.url }}"
+	                    onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;" data-toggle="tooltip" title="Share on Google plus">
+	                        <i class="fa fa-google-plus"></i>
+	                </a>
+	            </li>
+	        </ul>
+			<div class="post-body bordered-bottom text-center">
+			{% if post.description %}
+				<a href="{{ post.url }}" data-toggle="tooltip" title="{{ post.description }}" class="more-link btn btn-danger btn-large">
+			        <i class="fa fa-link"></i> permalink...
+			    </a>
+			{% else %}
+			    <a href="{{ post.url }}" data-toggle="tooltip" title="Read more about {{ post.title }}" class="more-link btn btn-danger btn-large">
+			        <i class="fa fa-link"></i> permalink...
+			    </a>
+			{% endif %}
+			</div>
+	    </header>
+	</article>
+</div>
+		{% endif %}
 
+		{% if post.type == 'status' %}
+<div class="row">
+	<article class="post col-md-10 col-md-offset-1">
+		<header class="post-header">
+			<h2 class="post-title text-center super lighter">
+				<a href="{{ post.url }}" style="color: #c91b26"><i class="fa fa-retweet"></i> "{{ post.excerpt | strip_html }}"</a>
+			</h2>
+			<p class="light small text-center">
+				Share this Status
+			</p>
+			<ul class="social-mini text-center">
+				<li>
+					<a href="https://twitter.com/intent/tweet?text=&quot;{{ post.title }}&quot;%20{{ post.url }}%20via%20&#64;{{ site.author.twitter }}"
+						onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;" data-toggle="tooltip" title="Share on Twitter">
+						<i class="fa fa-twitter"></i>
+					</a>
+				</li>
+				<li>
+					<a href="https://www.facebook.com/sharer/sharer.php?u={{ post.url }}" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;"
+						data-toggle="tooltip" title="Share on Facebook">
+						<i class="fa fa-facebook"></i>
+					</a>
+				</li>
+				<li>
+					<a href="https://plus.google.com/share?url={{ post.url }}" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;"
+						data-toggle="tooltip" title="Share on Google plus">
+						<i class="fa fa-google-plus"></i>
+					</a>
+				</li>
+			</ul>
+			<div class="post-info text-center small">
+				Status posted @
+				<time datetime="{{ post.date | date_to_xmlschema }}" class="post-time">{{ post.date | date: "%d %b %Y" }}</time>
 
+				{% if post.modified %}
+					{% if modifiedtime != posttime %} 
+				and <code>last modified on <time datetime="{{ post.modified | date: "%Y-%m-%d" }}" itemprop="dateModified">{{ post.modified | date: "%d %b %Y" }}</time></code>
+					{% endif %}
+				{% endif %} 
+				
+				in <span class="post-tags">
+					
+				{% for tag in post.categories %}
+				
+				<a href="/categories/index.html#{{ post.categories | cgi_encode }}" data-toggle="tooltip" title="Other posts from the {{ tag | capitalize }} category" rel="tag">
+					{{ tag | capitalize }}
+				</a>
 
+					{% unless forloop.last %}
+				&nbsp;&bull;&nbsp;
+					{% endunless %}
+				{% endfor %}
+				</span>&nbsp;
 
+				<span class="post-tags">by {{ site.author.name }}</span>
+				<div class="post-body bordered-bottom"></div>
+			</div>
+		</header>
+	</article>
+</div>
+		{% endif %}
 
-<link rel="canonical" href="http://www.kostyaev.me/">
-<link href="http://www.kostyaev.me/feed.xml" type="application/atom+xml" rel="alternate" title="Dmitry Kostyaev Feed">
+	    {% if post.type == 'video' %}
+<div class="row">
+	<article class="post post col-md-8 col-md-offset-2">
+		<header class="post-header">
+			{% if post.link %}
+			<h2 class="post-title text-center super lighter">
+				<a href="{{ post.url }}" style="color: #fff; background-color: #45ADA8; border-radius: 4px; padding: 10px">
+					<i class="fa fa-play-circle"></i> {{ post.title }}
+				</a>
+			{% else %}
+				<h2 class="post-title text-center super lighter bordered-bottom">
+					<a href="{{ post.url }}"><i class="fa fa-play-circle"></i> {{ post.title }}</a>
+			{% endif %}
+			</h2>
 
-
-<!-- http://t.co/dKP3o1e -->
-<meta name="HandheldFriendly" content="True">
-<meta name="MobileOptimized" content="320">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    
-    <link rel="stylesheet" type="text/css" href="http://www.kostyaev.me/assets/css/bootstrap.css" />
-    <link rel="stylesheet" type="text/css" href="http://www.kostyaev.me/assets/css/style.css" />
-
-<div class="search-wrapper">
-    <div class="search-form">
-        <input type="text" class="search-field" placeholder="Search...">
-        <i class="icon-remove-sign"></i>
-        <ul class="search-results post-list"></ul><!-- /.search-results -->
-    </div><!-- /.search-form -->
-</div><!-- ./search-wrapper -->
-
-
-
-
-<!-- Icons -->
-<!-- 16x16 -->
-<link rel="shortcut icon" href="http://www.kostyaev.me/favicon.ico">
-<!-- 32x32 -->
-<link rel="shortcut icon" href="http://www.kostyaev.me/favicon.png">
-<!-- 57x57 (precomposed) for iPhone 3GS, pre-2011 iPod Touch and older Android devices -->
-<link rel="apple-touch-icon-precomposed" href="http://www.kostyaev.me/images/apple-touch-icon-precomposed.png">
-<!-- 72x72 (precomposed) for 1st generation iPad, iPad 2 and iPad mini -->
-<link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://www.kostyaev.me/images/apple-touch-icon-72x72-precomposed.png">
-<!-- 114x114 (precomposed) for iPhone 4, 4S, 5 and post-2011 iPod Touch -->
-<link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://www.kostyaev.me/images/apple-touch-icon-114x114-precomposed.png">
-<!-- 144x144 (precomposed) for iPad 3rd and 4th generation -->
-<link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://www.kostyaev.me/images/apple-touch-icon-144x144-precomposed.png">
-
-</head>
-<body class="home-template" itemscope itemtype="http://schema.org/WebPage">
-<div id="fade"></div>
-<a id="slide" class="animated fade"></a>
-<aside id="sidebar">
-    <nav id="navigation">
-    <h2>MENU</h2>
-    <hr>
-
-            <li>
-                    <a href="http://www.kostyaev.me/">Home</a>
-                 </li>
-
-            <li>
-                    <a href="http://www.kostyaev.me/categories">Categories</a>
-                 </li>
-
-            <li>
-                    <a href="http://www.kostyaev.me/tags">Tags</a>
-                 </li>
-            
-           <li><a href="http://www.kostyaev.me/feed.xml" title="Atom/RSS feed"><i class="icon-rss"></i> Feed</a></li>
-    </nav>
-    
-    
-</aside>
-
-<header id="masthead" class="blog-background overlay align-center align-middle animated from-bottom"  style="background-image: url(http://www.kostyaev.me/images/coworking.jpg)" itemscope itemtype="http://schema.org/Organization">
-
-
-    <button class="menu-button animated fade dosearch">
-        <i class="icon-search"></i>
-    </button>
-
-
-    <div class="inner">
-        <div class="container">
-            <a class="brand light" href="http://www.kostyaev.me" role="banner" itemprop="url">
-
-                <img itemprop="logo" src="http://www.kostyaev.me/images/java-logo-lambda.png" alt="Dmitry Kostyaev Logo" />
-
-            <h1 class="blog-title light" itemprop="name">
-                Dmitry Kostyaev
-            </h1>
-                
-            </a>
-            <h2 class="blog-description light bordered bordered-top" itemprop="description">
-                Articles about IT stuff
-            </h2>
-        </div>
-    </div>
-    
-    
-    <div class="decor-wrapper">
-        <svg id="header-decor" class="decor bottom" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path class="large left" d="M0 0 L50 50 L0 100" fill="rgba(255,255,255, .1)"></path>
-            <path class="large right" d="M100 0 L50 50 L100 100" fill="rgba(255,255,255, .1)"></path>
-
-            <path class="medium left" d="M0 100 L50 50 L0 33.3" fill="rgba(255,255,255, .3)"></path>
-            <path class="medium right" d="M100 100 L50 50 L100 33.3" fill="rgba(255,255,255, .3)"></path>
-
-            <path class="small left" d="M0 100 L50 50 L0 66.6" fill="rgba(255,255,255, .5)"></path>
-            <path class="small right" d="M100 100 L50 50 L100 66.6" fill="rgba(255,255,255, .5)"></path>
-
-            <path d="M0 99.9 L50 49.9 L100 99.9 L0 99.9" fill="rgba(255,255,255, 1)"></path>
-
-            <path d="M48 52 L50 49 L52 52 L48 52" fill="rgba(255,255,255, 1)"></path>
-
-        </svg>
-    </div>
-    
-</header>
-
-
-
-<div id="main" class="content" role="main" itemprop="mainContentOfPage">
-    <div class="container">
-        <div class="row">
-            <div class="page-body" itemprop="description">
-            
-	
-		
-		
-		
-		
-		
+			<div class="post-info text-center small">
+				<time datetime="{{ post.date | date_to_xmlschema }}" class="post-time">{{ post.date | date: "%d %b %Y" }}</time>
 			
-	        
-	        
-	        
-	        
-	        <div class="row">
-	            <article class="post post col-md-8 col-md-offset-2">
-	               <header class="post-header">
-	               
-	                    
-	                    <h2 class="post-title text-center super lighter bordered-bottom">
-	                        <a href="http://www.kostyaev.me/article/Semantic%20Clustering%20of%20Images">Semantic clustering of images</a>
-	                    
-	                    </h2>
-	                    <div class="post-info text-center small">
-	                        <time datetime="2016-03-16T00:00:00+03:00" class="post-time">16 Mar 2016</time>
-	                        in <span class="post-tags"><a href="http://www.kostyaev.me/categories/index.html#article" data-toggle="tooltip" title="Other posts from the Article category" rel="tag">Article</a></span>&nbsp;<span class="post-tags"><i class="icon-time"></i>&nbsp;<span class="time">1.625</span> minutes read</span>
-	                    </div>
-	                </header>
-	                <div class="post-body bordered-bottom">
-	                
-	                <p >Recent studies in the field of computer vision have shown the abilities of deep convolutional neural networks to learn high level image representation. These representations have reach semantic and can be very handy in various visual tasks. One of such task that can make use of high level features is semantic clusterization. Let’s find some pictures in Google Web Search, feed them to CNN and apply k-means to the extracted feautures and take the biggest clusters, here is what I got for different queries :
+			{% if post.modified %}
+			
+				{% if modifiedtime != posttime %} 
+				and <code>last modified on <time datetime="{{ post.modified | date: "%Y-%m-%d" }}" itemprop="dateModified">{{ post.modified | date: "%d %b %Y" }}</time></code>
+				{% endif %}
+			{% endif %} 
+				in <span class="post-tags">
 
-&hellip;</p>
-	                    <div class="text-center">
-	                    
-		                <a href="http://www.kostyaev.me/article/Semantic%20Clustering%20of%20Images" data-toggle="tooltip" title="Semantic clustering of images with a convolutional neural network" class="more-link btn btn-danger btn-large">
-		                    <i class="icon-link"></i> read more...
-		                </a>
-		                
-		                </div>
-	                </div>
-	            </article>
-	        </div>
-			
-	
-		
-		
-		
-		
-		
-			
-	        
-	        
-	        
-	        
-	        <div class="row">
-	            <article class="post post col-md-8 col-md-offset-2">
-	               <header class="post-header">
-	               
-	                    
-	                    <h2 class="post-title text-center super lighter bordered-bottom">
-	                        <a href="http://www.kostyaev.me/article/Why%20top-5%20error%20is%20more%20fair%20metric%20than%20top-1%20for%20ImageNet%20classification%20task">Why top-5 error is more fair metric than top-1 for ILSVRC models</a>
-	                    
-	                    </h2>
-	                    <div class="post-info text-center small">
-	                        <time datetime="2016-03-01T00:00:00+03:00" class="post-time">01 Mar 2016</time>
-	                        in <span class="post-tags"><a href="http://www.kostyaev.me/categories/index.html#article" data-toggle="tooltip" title="Other posts from the Article category" rel="tag">Article</a></span>&nbsp;<span class="post-tags"><i class="icon-time"></i>&nbsp;<span class="time">1.83</span> minutes read</span>
-	                    </div>
-	                </header>
-	                <div class="post-body bordered-bottom">
-	                
-	                
-	                    <p>For the most publicly available models trained on ImageNet dataset top-5 and top-1 errors are reported. The best perfoming model from ILSVRC 2015 has 6.7% top-5 error and 23% top-1 error evaluated using singe center crop. It’s pretty interesting to find out that human error turned out to be not much better, top-5 error is around 5.1% according to the result of some experiments descibed in the article. An ensembe of models show even better results, six models of different depth leads to 3.57% top-5 error (1st place in ILSVRC 2015). Top-1 error still seems to be very big and...&hellip;</p>
-	                    <div class="text-center">
-	                    
-		                <a href="http://www.kostyaev.me/article/Why%20top-5%20error%20is%20more%20fair%20metric%20than%20top-1%20for%20ImageNet%20classification%20task" data-toggle="tooltip" title="Read more about Why top-5 error is more fair metric than top-1 for ILSVRC models" class="more-link btn btn-danger btn-large">
-		                    <i class="icon-link"></i> read more...
-		                </a>
-		                
-		                </div>
-	                </div>
-	            </article>
-	        </div>
-			
-	
-		
-		
-		
-		
-		
-			
-	        
-	        
-	        
-	        
-	        <div class="row">
-	            <article class="post post col-md-8 col-md-offset-2">
-	               <header class="post-header">
-	               
-	                    
-	                    <h2 class="post-title text-center super lighter bordered-bottom">
-	                        <a href="http://www.kostyaev.me/article/Multilabel%20Dataset">Preparing multilabel dataset for training ConvNet with Caffe</a>
-	                    
-	                    </h2>
-	                    <div class="post-info text-center small">
-	                        <time datetime="2016-02-17T00:00:00+03:00" class="post-time">17 Feb 2016</time>
-	                        in <span class="post-tags"><a href="http://www.kostyaev.me/categories/index.html#article" data-toggle="tooltip" title="Other posts from the Article category" rel="tag">Article</a></span>&nbsp;<span class="post-tags"><i class="icon-time"></i>&nbsp;1 minute read</span>
-	                    </div>
-	                </header>
-	                <div class="post-body bordered-bottom">
-	                
-	                <p >Preparing multilabel training set for caffe framework is a bit nontrivial. So, if you have multiple, possibly varying number of ground truth labels for each training example then here is how you can do it using LMDB store. 
-For LMDB data source you need to separate your data input and your labels by creating two LMDB (one for the data and the second one for the labels). You also have to define two data layers in your network definition, set the same batch size for both of them and disable shuffling for the alignment.
+				{% for tag in post.categories %}
+				<a href="/categories/index.html#{{ post.categories | cgi_encode }}" data-toggle="tooltip" title="Other posts from the {{ tag | capitalize }} category" rel="tag">
+					{{ tag | capitalize }}
+				</a>
+					{% unless forloop.last %}
+				&nbsp;&bull;&nbsp;
+					{% endunless %}
+				{% endfor %}
+				</span>
+				
+				{% if site.readtime %}
+				
+				&nbsp;<span class="post-tags"><i class="fa fa-clock-o"></i>&nbsp;
+					{% if readtime > 1 and readtime < 1.5 %}
+					1 minute read
+					{% endif %}
 
-&hellip;</p>
-	                    <div class="text-center">
-	                    
-		                <a href="http://www.kostyaev.me/article/Multilabel%20Dataset" data-toggle="tooltip" title="Read more about Preparing multilabel dataset for training ConvNet with Caffe" class="more-link btn btn-danger btn-large">
-		                    <i class="icon-link"></i> read more...
-		                </a>
-		                
-		                </div>
-	                </div>
-	            </article>
-	        </div>
-			
-	
-		
-		
-		
-		
-		
-			
-	        
-	        
-	        
-	        
-	        <div class="row">
-	            <article class="post post col-md-8 col-md-offset-2">
-	               <header class="post-header">
-	               
-	                    
-	                    <h2 class="post-title text-center super lighter bordered-bottom">
-	                        <a href="http://www.kostyaev.me/article/Sentiment%20analysis">Sentiment analysis with CoreNLP</a>
-	                    
-	                    </h2>
-	                    <div class="post-info text-center small">
-	                        <time datetime="2014-06-21T00:00:00+04:00" class="post-time">21 Jun 2014</time>
-	                        in <span class="post-tags"><a href="http://www.kostyaev.me/categories/index.html#article" data-toggle="tooltip" title="Other posts from the Article category" rel="tag">Article</a></span>&nbsp;<span class="post-tags"><i class="icon-time"></i>&nbsp;<span class="time">2.36</span> minutes read</span>
-	                    </div>
-	                </header>
-	                <div class="post-body bordered-bottom">
-	                
-	                
-	                    <p>In the rise of social media customer’s opinions has become extremely valuable for businesses selling their products, financial markets and social researches. To extract opinions from customer’s reviews, comments or other kind of text data you might want to know what sentiment analysis is. Sentiment analysis and opinion mining is the field of study that analyzes people’s opinions, sentiments, evaluations, attitudes, and emotions from written language.1 So the the basic task of sentiment analysis is classifying text into some emotive categories. The most common set of categories are: positive, neutral and negative. Methods for sentiment analysis There is a number...&hellip;</p>
-	                    <div class="text-center">
-	                    
-		                <a href="http://www.kostyaev.me/article/Sentiment%20analysis" data-toggle="tooltip" title="How to do sentiment analysis with CoreNLP library" class="more-link btn btn-danger btn-large">
-		                    <i class="icon-link"></i> read more...
-		                </a>
-		                
-		                </div>
-	                </div>
-	            </article>
-	        </div>
-			
-	
+					{% if readtime > 1.5 %}
+					<span class="time">{{ readtime }}</span> minutes read
+					{% endif %}
+					
+					{% if readtime < 1 %}
+					Less than 1 minute read
+					{% endif %}
+				</span>
+				{% endif %}
+			</div>
+		</header>
 
+		<div class="post-body bordered-bottom">
+			{% if post.video %}
+				{% assign video_embed = post.video | remove:'https://www.youtube.com/watch?v=' %}
+			<p>
+				<iframe width="940" height="529" src="//www.youtube.com/embed/{{ video_embed }}?theme=light&amp;color=white" frameborder="0"
+					allowfullscreen> </iframe>
+			</p>
 
-            </div>    
-        </div>
+			<p class="lead">{{ post.content | strip_html | truncatewords:100 }}&hellip;</p>
+			{% else %}
+			<p class="lead">{{ post.excerpt }}&hellip;</p>
+			{% endif %}
+
+			<div class="text-center">
+			{% if post.description %}
+				<a href="{{ post.url }}" data-toggle="tooltip" title="{{ post.description }}" class="more-link btn btn-danger btn-large">
+					<i class="fa fa-link"></i> see more...
+				</a>
+			{% else %}
+				<a href="{{ post.url }}" data-toggle="tooltip" title="Read more about {{ post.title }}" class="more-link btn btn-danger btn-large">
+					<i class="fa fa-link"></i> see more...
+				</a>
+			{% endif %}
+			</div>
+		</div>
+	</article>
+</div>
+	    {% endif %}
+
+		{% if post.type == 'photo' %}
+<div class="row">
+	<article class="post post col-md-8 col-md-offset-2">
+		<header class="post-header">
+			{% if post.photo %}
+			<figure>
+				<a href="{{ post.url }}"><img src="/images/{{ post.photo }}" alt="{{ post.title }}" itemprop="image"></a>
+			</figure>
+			{% else %}
+			<figure>
+				<a href="{{ post.url }}"><img src="/images/{{ post.imagefeature }}" alt="{{ post.title }}" itemprop="image"></a>
+			</figure>
+			{% endif %}
+			
+			{% if post.link %}
+			<h2 class="post-title text-center super lighter">
+				<a href="{{ post.url }}" style="color: #fff; background-color: #45ADA8; border-radius: 4px; padding: 10px">
+					<i class="fa fa-picture-o"></i> {{ post.title }}
+				</a>
+			{% else %}
+			<h2 class="post-title text-center super lighter bordered-bottom">
+				<a href="{{ post.url }}">
+					<i class="fa fa-picture-o"></i> {{ post.title }}
+					</a>
+			{% endif %}
+			</h2>
+				
+			<div class="post-info text-center small">
+				<time datetime="{{ post.date | date_to_xmlschema }}" class="post-time">{{ post.date | date: "%d %b %Y" }}</time>
+				
+			{% if post.modified %}
+				{% if modifiedtime != posttime %}
+			and <code>last modified on <time datetime="{{ post.modified | date: "%Y-%m-%d" }}" itemprop="dateModified">{{ post.modified | date: "%d %b %Y" }}</time></code>
+				{% endif %}
+			{% endif %} 
+			
+			in <span class="post-tags">
+				
+			{% for tag in post.categories %}
+			<a href="/categories/index.html#{{ post.categories | cgi_encode }}" data-toggle="tooltip" title="Other posts from the {{ tag | capitalize }} category" rel="tag">
+				{{ tag | capitalize }}
+			</a>
+			{% unless forloop.last %}
+			&nbsp;&bull;&nbsp;
+			{% endunless %}
+			{% endfor %}
+			</span>
+			
+			{% if site.readtime %}
+				&nbsp;<span class="post-tags"><i class="fa fa-clock-o"></i>&nbsp;
+				{% if readtime > 1 and readtime < 1.5 %}
+					1 minute read
+				{% endif %}
+				{% if readtime > 1.5 %}
+					<span class="time">{{ readtime }}</span> minutes read
+				{% endif %}
+				{% if readtime < 1 %}
+					Less than 1 minute read
+				{% endif %}
+				</span>
+			{% endif %}
+			</div>
+		</header>
+
+		<div class="post-body bordered-bottom">
+			<p>{{ post.content | strip_html | truncatewords:100 }}&hellip;</p>
+			<div class="text-center">
+			{% if post.description %}
+				<a href="{{ post.url }}" data-toggle="tooltip" title="{{ post.description }}" class="more-link btn btn-danger btn-large">
+					<i class="fa fa-link"></i> read more...
+				</a>
+			{% else %}
+				<a href="{{ post.url }}" data-toggle="tooltip" title="Read more about {{ post.title }}" class="more-link btn btn-danger btn-large">
+					<i class="fa fa-link"></i> read more...
+				</a>
+			{% endif %}
+			</div>
+		</div>
+	</article>
+</div>
+		{% endif %}
+	        
+			
+		{% if post.type != 'video' and post.type != 'status' and post.type != 'quote' and post.type != 'photo' %}
+<div class="row">
+	<article class="post post col-md-8 col-md-offset-2">
+		<header class="post-header">
+		{% if post.featured %}
+			<div class="cursive">this post is featured</div>
+		{% endif %}
+		
+		{% if post.link %}
+			<h2 class="post-title text-center super lighter">
+				<a href="{{ post.url }}" style="color: #fff; background-color: #45ADA8; border-radius: 4px; padding: 10px">
+					<i class="fa fa-link"></i> {{ post.title }}
+				</a>
+		{% else %}
+				<h2 class="post-title text-center super lighter bordered-bottom">
+					<a href="{{ post.url }}">{{ post.title }}</a> 
+		{% endif %}
+			</h2>
+
+			<div class="post-info text-center small">
+				<time datetime="{{ post.date | date_to_xmlschema }}" class="post-time">{{ post.date | date: "%d %b %Y" }}</time>
+
+			{% if post.modified %}
+				{% if modifiedtime != posttime %}
+					and <code>last modified on <time datetime="{{ post.modified | date: "%Y-%m-%d" }}" itemprop="dateModified">{{ post.modified | date: "%d %b %Y" }}</time></code>
+				{% endif %}
+			{% endif %} 
+				
+			in <span class="post-tags">
+				
+			{% for tag in post.categories %}
+				<a href="/categories/index.html#{{ post.categories | cgi_encode }}" data-toggle="tooltip" title="Other posts from the {{ tag | capitalize }} category" rel="tag">
+					{{ tag | capitalize }}
+				</a>
+			{% unless forloop.last %}
+				&nbsp;&bull;&nbsp;
+			{% endunless %}
+			{% endfor %}
+			</span>
+				
+			{% if site.readtime %}
+			&nbsp;<span class="post-tags"><i class="fa fa-clock-o"></i>&nbsp;
+				{% if readtime > 1 and readtime < 1.5 %}
+					1 minute read
+				{% endif %}
+
+				{% if readtime > 1.5 %}
+					<span class="time">{{ readtime }}</span> minutes read
+				{% endif %}
+
+				{% if readtime < 1 %}
+					Less than 1 minute read
+				{% endif %}
+				</span>
+			{% endif %}
+			</div>
+		</header>
+
+		<div class="post-body bordered-bottom">
+			{% assign excerptsize = post.excerpt | number_of_words %} 
+			
+		{% if excerptsize <= 100 and excerptsize >= 50 %}
+			<p class="lead">{{ post.excerpt | strip_html }}&hellip;</p>
+		{% else %}
+			<p>{{ post.content | strip_html | truncatewords:100 }}&hellip;</p>
+		{% endif %}
+			<div class="text-center">
+			{% if post.description %}
+				<a href="{{ post.url }}" data-toggle="tooltip" title="{{ post.description }}" class="more-link btn btn-danger btn-large">
+					<i class="fa fa-link"></i> read more...
+				</a>
+			{% else %}
+				<a href="{{ post.url }}" data-toggle="tooltip" title="Read more about {{ post.title }}" class="more-link btn btn-danger btn-large">
+					<i class="fa fa-link"></i> read more...
+				</a>
+			{% endif %}
+			</div>
+		</div>
+	</article>
+</div>
+		{% endif %}
+	{% endfor %}
+
+	{% if paginator.total_pages > 1 %}
+<div class="row text-center text-caps">
+	<div class="col-md-8 col-md-offset-2">
+		<nav class="pagination" role="navigation">
+		{% if paginator.previous_page %}
+			{% if paginator.previous_page == 1 %}
+        	<a class="newer-posts" href="">&larr; Newer Posts</a>
+			{% else %}
+			<a class="newer-posts" href="/blog/{{ paginator.previous_page }}">&larr; Newer Posts</a>
+			{% endif %}
+		{% endif %}
+    	<span class="page-number">Page {{ paginator.page }} of {{ paginator.total_pages }}</span>
+		{% if paginator.next_page %}   
+    		<a class="older-posts" href="/blog/{{ paginator.next_page }}">Older Posts &rarr;</a>
+ 		{% endif %}
+		</nav>
     </div>
 </div>
-    
-<footer id="footer"  class="blog-background overlay text-center align-middle animated from-top" style="background-image: url(http://www.kostyaev.me/images/coworking.jpg)" >
+	{% endif %}
+	{% else %}
+	{% for post in paginator.posts %}
 
+		{% assign readtime = post.content | strip_html | number_of_words | append: '.0' | divided_by:site.wpm %}
+		{% assign modifiedtime = post.modified | date: "%Y%m%d" %}
+		{% assign posttime = post.date | date: "%Y%m%d" %}
 
-    <div class="inner">
-        <div class="container">
+		{% if post.type == 'quote' %}
+<div class="row">
+	<article class="post col-md-10 col-md-offset-1">
+		<header class="post-header">
+			<h2 class="post-title text-center super lighter">
+				<a href="{{ post.url }}"><i class="fa fa-quote-left"></i> {{ post.excerpt | strip_html }}</a>
+			</h2>
+			<p class="light small text-center">
+				Share this Quote
+			</p>
+			<ul class="social-mini text-center">
+				<li>
+					<a href="https://twitter.com/intent/tweet?text=&quot;{{ post.title }}&quot;%20{{ post.url }}%20via%20&#64;{{ site.author.twitter }}"
+						onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;" data-toggle="tooltip" title="Share on Twitter">
+						<i class="fa fa-twitter"></i>
+					</a>
+				</li>
+				<li>
+					<a href="https://www.facebook.com/sharer/sharer.php?u={{ post.url }}" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;"
+						data-toggle="tooltip" title="Share on Facebook">
+						<i class="fa fa-facebook"></i>
+					</a>
+				</li>
+				<li>
+					<a href="https://plus.google.com/share?url={{ post.url }}" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;"
+						data-toggle="tooltip" title="Share on Google plus">
+						<i class="fa fa-google-plus"></i>
+					</a>
+				</li>
+			</ul>
+			<div class="post-body bordered-bottom text-center">
+			{% if post.description %}
+				<a href="{{ post.url }}" data-toggle="tooltip" title="{{ post.description }}" class="more-link btn btn-danger btn-large">
+					<i class="fa fa-link"></i> permalink...
+				</a>
+			{% else %}
+				<a href="{{ post.url }}" data-toggle="tooltip" title="Read more about {{ post.title }}" class="more-link btn btn-danger btn-large">
+					<i class="fa fa-link"></i> permalink...
+				</a>
+			{% endif %}
+			</div>
+		</header>
+	</article>
+</div>
 
-            <ul class="social-icons">
-            <li>
-                <a href="http://twitter.com/virtuozz0" data-toggle="tooltip" title="Kostyaev Dmitry on Twitter" target="_blank">
-                    <i class="icon-twitter"></i>
-                </a>
-            </li>
-            <li>
-                <a href="http://facebook.com/1555560457" data-toggle="tooltip" title="Kostyaev Dmitry on Facebook" target="_blank">
-                    <i class="icon-facebook"></i>
-                </a>
-            </li>
-            
-            
-            <li>
-                <a href="https://www.linkedin.com/pub/dmitry-kostyaev/73/955/206" data-toggle="tooltip" title="Kostyaev Dmitry on LinkedIn" target="_blank">
-                    <i class="icon-linkedin"></i>
-                </a>
-            </li>
-            
-            
-            <li>
-                <a href="http://github.com/kostyaev" data-toggle="tooltip" title="Kostyaev Dmitry on Github" target="_blank">
-                    <i class="icon-github"></i>
-                </a>
-            </li>
-        </ul>
-            <div>
-                <a href="http://www.kostyaev.me/about/">Kostyaev Dmitry</a> &copy; 2016 &bull; All rights reserved.
-            </div>
-            <ul class="menu-items">
-            
-            <li>
-                
-                    <a href="http://www.kostyaev.me/"><i class="icon-home"></i></a>&nbsp;&bull;
-                 
-            </li>
-            
-            <li>
-                
-                    <a href="http://www.kostyaev.me/categories">Categories</a>&nbsp;&bull;
-                 
-            </li>
-            
-            <li>
-                
-                    <a href="http://www.kostyaev.me/tags">Tags</a>&nbsp;&bull;
-                 
-            </li>
-            
-            <li><a href="http://www.kostyaev.me/feed.xml" title="Atom/RSS feed"><i class="icon-rss"></i> Feed</a></li>
-        </ul>
-        </div>
-    </div>
-    
-        <div class="decor-wrapper">
-            <svg id="footer-decor" class="decor top" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100" preserveAspectRatio="none">
+		{% endif %}
 
-                <path class="large left" d="M0 0 L50 50 L0 100" fill="rgba(255,255,255, .1)"></path>
-                <path class="large right" d="M100 0 L50 50 L100 100" fill="rgba(255,255,255, .1)"></path>
+	    {% if post.type == 'status' %}
+<div class="row">
+	<article class="post col-md-10 col-md-offset-1">
+		<header class="post-header">
+			<h2 class="post-title text-center super lighter">
+				<a href="{{ post.url }}" style="color: #c91b26"><i class="fa fa-retweet"></i> "{{ post.excerpt | strip_html }}"</a>
+			</h2>
+			<p class="light small text-center">
+				Share this Status
+			</p>
+			<ul class="social-mini text-center">
+				<li>
+					<a href="https://twitter.com/intent/tweet?text=&quot;{{ post.title }}&quot;%20{{ post.url }}%20via%20&#64;{{ site.author.twitter }}"
+						onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;" data-toggle="tooltip" title="Share on Twitter">
+						<i class="fa fa-twitter"></i>
+					</a>
+				</li>
+				<li>
+					<a href="https://www.facebook.com/sharer/sharer.php?u={{ post.url }}" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;"
+						data-toggle="tooltip" title="Share on Facebook">
+						<i class="fa fa-facebook"></i>
+					</a>
+				</li>
+				<li>
+					<a href="https://plus.google.com/share?url={{ post.url }}" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;"
+						data-toggle="tooltip" title="Share on Google plus">
+						<i class="fa fa-google-plus"></i>
+					</a>
+				</li>
+			</ul>
+			<div class="post-info text-center small">
+				Status posted @ <time datetime="{{ post.date | date_to_xmlschema }}" class="post-time">{{ post.date | date: "%d %b %Y" }}</time>
+			{% if post.modified %}
+				{% if modifiedtime != posttime %}
+				and <code>last modified on <time datetime="{{ post.modified | date: "%Y-%m-%d" }}" itemprop="dateModified">{{ post.modified | date: "%d %b %Y" }}</time></code>
+				{% endif %}
+			{% endif %}
+			
+				in <span class="post-tags">
+				{% for tag in post.categories %}
+					<a href="/categories/index.html#{{ post.categories | cgi_encode }}" data-toggle="tooltip" title="Other posts from the {{ tag | capitalize }} category" rel="tag">
+						{{ tag | capitalize }}
+					</a>
+				{% unless forloop.last %}
+					&nbsp;&bull;&nbsp;
+				{% endunless %}
+				{% endfor %}
+				</span>&nbsp;
+				<span class="post-tags">
+					by {{ site.author.name }}
+				</span>
+				<div class="post-body bordered-bottom"></div>
+			</div>
+		</header>
+	</article>
+</div>
+		{% endif %}
 
-                <path class="medium left" d="M0 0 L50 50 L0 66.6" fill="rgba(255,255,255, .3)"></path>
-                <path class="medium right" d="M100 0 L50 50 L100 66.6" fill="rgba(255,255,255, .3)"></path>
+	    {% if post.type == 'video' %}
+<div class="row">
+	<article class="post post col-md-8 col-md-offset-2">
+		<header class="post-header">
+		{% if post.link %}
+			<h2 class="post-title text-center super lighter">
+				<a href="{{ post.url }}" style="color: #fff; background-color: #45ADA8; border-radius: 4px; padding: 10px"><i class="fa fa-play-circle"></i> {{ post.title }}</a>
+		{% else %}
+			<h2 class="post-title text-center super lighter bordered-bottom">
+				<a href="{{ post.url }}"><i class="fa fa-play-circle"></i> {{ post.title }}</a>
+		{% endif %}
+			</h2>
+			<div class="post-info text-center small">
+				<time datetime="{{ post.date | date_to_xmlschema }}" class="post-time">{{ post.date | date: "%d %b %Y" }}</time>
+				{% if post.modified %}
+					{% if modifiedtime != posttime %}
+					and <code>last modified on <time datetime="{{ post.modified | date: "%Y-%m-%d" }}" itemprop="dateModified">{{ post.modified | date: "%d %b %Y" }}</time></code>
+					{% endif %}
+				{% endif %}
+				
+				in <span class="post-tags">
+				{% for tag in post.categories %}
+					<a href="/categories/index.html#{{ post.categories | cgi_encode }}" data-toggle="tooltip" title="Other posts from the {{ tag | capitalize }} category" rel="tag">
+						{{ tag | capitalize }}
+					</a>
+				{% unless forloop.last %}
+					&nbsp;&bull;&nbsp;
+				{% endunless %}
+				{% endfor %}
+				</span>
+				
+				{% if site.readtime %}
+				&nbsp;<span class="post-tags"><i class="fa fa-clock-o"></i>&nbsp;
+					{% if readtime > 1 and readtime < 1.5 %}
+						1 minute read
+					{% endif %}
+					{% if readtime > 1.5 %}
+						<span class="time">{{ readtime }}</span> minutes read
+					{% endif %}
+					{% if readtime < 1 %}
+						Less than 1 minute read
+					{% endif %}
+				</span>
+				{% endif %}
+			</div>
+		</header>
 
-                <path class="small left" d="M0 0 L50 50 L0 33.3" fill="rgba(255,255,255, .5)"></path>
-                <path class="small right" d="M100 0 L50 50 L100 33.3" fill="rgba(255,255,255, .5)"></path>
+		<div class="post-body bordered-bottom">
+		{% if post.video %} 
+			{% assign video_embed = post.video | remove:'https://www.youtube.com/watch?v=' %}
+			<p>
+				<iframe width="940" height="529" src="//www.youtube.com/embed/{{ video_embed }}?theme=light&amp;color=white" frameborder="0"
+					allowfullscreen> </iframe>
+			</p>
+			<p class="lead">{{ post.content | strip_html | truncatewords:100 }}&hellip;</p>
+		{% else %}
+			<p class="lead">{{ post.excerpt }}&hellip;</p>
+		{% endif %}
 
-                <path d="M0 0 L50 50 L100 0 L0 0" fill="rgba(255,255,255, 1)"></path>
+			<div class="text-center">
+			{% if post.description %}
+				<a href="{{ post.url }}" data-toggle="tooltip" title="{{ post.description }}" class="more-link btn btn-danger btn-large">
+					<i class="fa fa-link"></i> see more...
+				</a>
+			{% else %}
+				<a href="{{ post.url }}" data-toggle="tooltip" title="Read more about {{ post.title }}" class="more-link btn btn-danger btn-large">
+					<i class="fa fa-link"></i> see more...
+				</a>
+			{% endif %}
+			</div>
+		</div>
+	</article>
+</div>
+		{% endif %}
 
-                <path d="M48 48 L50 51 L52 48 L48 48" fill="rgba(255,255,255, 1)"></path>
+	    {% if post.type == 'photo' %}
+<div class="row">
+	<article class="post post col-md-8 col-md-offset-2">
+		<header class="post-header">
+		{% if post.photo %}
+			<figure>
+				<a href="{{ post.url }}"><img src="/images/{{ post.photo }}" alt="{{ post.title }}" itemprop="image"></a>
+			</figure>
+		{% else %}
+			<figure>
+				<a href="{{ post.url }}"><img src="/images/{{ post.imagefeature }}" alt="{{ post.title }}" itemprop="image"></a>
+			</figure>
+		{% endif %}
+		
+		{% if post.link %}
+			<h2 class="post-title text-center super lighter">
+				<a href="{{ post.url }}" style="color: #fff; background-color: #45ADA8; border-radius: 4px; padding: 10px">
+					<i class="fa fa-picture-o"></i> {{ post.title }}
+				</a>
+		{% else %}
+			<h2 class="post-title text-center super lighter bordered-bottom">
+				<a href="{{ post.url }}">
+					<i class="fa fa-picture-o"></i> {{ post.title }}
+				</a>
+		{% endif %}
+		</h2>
 
-            </svg>
-        </div>
-    
-</footer>
+			<div class="post-info text-center small">
+				<time datetime="{{ post.date | date_to_xmlschema }}" class="post-time">{{ post.date | date: "%d %b %Y" }}</time>
+			
+			{% if post.modified %}
+				{% if modifiedtime != posttime %}
+				and <code>last modified on <time datetime="{{ post.modified | date: "%Y-%m-%d" }}" itemprop="dateModified">{{ post.modified | date: "%d %b %Y" }}</time></code>
+				{% endif %}
+			{% endif %}
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="http://www.kostyaev.me/assets/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
-<script src="http://www.kostyaev.me/assets/js/scripts.min.js"></script>
-<script type="text/javascript" src="http://www.kostyaev.me/assets/js/waypoints.min.js"></script>
-<script type="text/javascript" src="http://www.kostyaev.me/assets/js/script.js"></script>
-<script type='text/javascript'>$(document).ready(function(){$(".time").text(function(a,b){return Math.round(parseFloat(b))})});</script>
+				in <span class="post-tags">
+				{% for tag in post.categories %}
+					<a href="/categories/index.html#{{ post.categories | cgi_encode }}" data-toggle="tooltip" title="Other posts from the {{ tag | capitalize }} category" rel="tag">
+						{{ tag | capitalize }}
+					</a>
+				{% unless forloop.last %}
+				&nbsp;&bull;&nbsp;
+				{% endunless %}
+				{% endfor %}
+				</span>
 
-<script type="text/javascript">
+				{% if site.readtime %}
+				&nbsp;<span class="post-tags"><i class="fa fa-clock-o"></i>&nbsp;
 
-/*      Slides       */
+				{% if readtime > 1 and readtime < 1.5 %}
+					1 minute read{% endif %}{% if readtime > 1.5 %}<span class="time">{{ readtime }}</span> minutes read
+				{% endif %}
 
-$("a#slide").click(function(){
-    $("#sidebar,body,a#slide,#fade").addClass("slide")
-});
+				{% if readtime< 1 %}
+					Less than 1 minute read
+				{% endif %}
+				</span>
+				{% endif %}
+			</div>
+		</header>
 
-$("#fade,#header,#posts-container").click(function(){
-    $("#sidebar,body,a#slide,#fade").removeClass("slide")
-});
+		<div class="post-body bordered-bottom">
+			<p>{{ post.content | strip_html | truncatewords:100 }}&hellip;</p>
+			<div class="text-center">
+			{% if post.description %}
+				<a href="{{ post.url }}" data-toggle="tooltip" title="{{ post.description }}" class="more-link btn btn-danger btn-large">
+					<i class="fa fa-link"></i> read more...
+				</a>
+			{% else %}
+				<a href="{{ post.url }}" data-toggle="tooltip" title="Read more about {{ post.title }}" class="more-link btn btn-danger btn-large">
+					<i class="fa fa-link"></i> read more...
+				</a>
+			{% endif %}
+			</div>
+		</div>
+	</article>
+</div>
+		{% endif %}
 
-$("a#click-filter").click(function(){
-    $("#slide-filter").slideToggle("medium");
-    $("#slide-pages").slideOut("medium");
-});
+	    {% if post.type != 'video' and post.type != 'status' and post.type != 'quote' and post.type != 'photo' %}
+<div class="row">
+	<article class="post post col-md-8 col-md-offset-2">
+		<header class="post-header">
+		{% if post.featured %}
+			<div class="cursive">this post is featured</div>
+		{% endif %}
+		
+		{% if post.link %}
+			<h2 class="post-title text-center super lighter">
+				<a href="{{ post.url }}" style="color: #fff; background-color: #45ADA8; border-radius: 4px; padding: 10px">
+					<i class="fa fa-link"></i> {{ post.title }}
+				</a>
+		{% else %}
+			<h2 class="post-title text-center super lighter bordered-bottom">
+				<a href="{{ post.url }}">{{ post.title }}</a> {% endif %}
+			</h2>
 
-$("a#click-pages").click(function(){
-    $("#slide-pages").slideToggle("medium");
-    $("#slide-filter").slideOut("medium");
-});
+			<div class="post-info text-center small">
+				<time datetime="{{ post.date | date_to_xmlschema }}" class="post-time">{{ post.date | date: "%d %b %Y" }}</time>
+			{% if post.modified %}
+				{% if modifiedtime != posttime %} 
+				and <code>last modified on <time datetime="{{ post.modified | date: "%Y-%m-%d" }}" itemprop="dateModified">{{ post.modified | date: "%d %b %Y" }}</time></code>
+				{% endif %}
+			{% endif %}
 
-/*      End-Slides      */
+			in <span class="post-tags">
+			{% for tag in post.categories %}
+			<a href="/categories/index.html#{{ post.categories | cgi_encode }}" data-toggle="tooltip" title="Other posts from the {{ tag | capitalize }} category" rel="tag">
+				{{ tag | capitalize }}
+			</a>
+			{% unless forloop.last %}
+			&nbsp;&bull;&nbsp;
+			{% endunless %}
+			{% endfor %}
+			</span>
 
-</script>
+			{% if site.readtime %}
+				&nbsp;<span class="post-tags"><i class="fa fa-clock-o"></i>&nbsp;
+				
+				{% if readtime > 1 and readtime < 1.5 %}
+					1 minute read
+				{% endif %}
 
+				{% if readtime > 1.5 %}
+					<span class="time">{{ readtime }}</span> minutes read
+				{% endif %}
+				
+				{% if readtime < 1 %}
+					Less than 1 minute read
+				{% endif %}
+				</span>
+			{% endif %}
+			</div>
+		</header>
 
-<!-- Jekyll Simple Search option -->
-<script>
-  $(document).ready(function() {
-      $('.search-field').simpleJekyllSearch({
-          jsonFile : 'http://www.kostyaev.me/search.json',
-          searchResults : '.search-results',
-          template : '<li><article><a href="{url}">{title} <span class="entry-date"><time datetime="{date}">{shortdate}</time></span></a></article></li>',
-          noResults: '<p>Nothing found.</p>'
-        });
-  });
+		<div class="post-body bordered-bottom">
+			{% assign excerptsize = post.excerpt | number_of_words %}
+			
+		{% if excerptsize <= 100 and excerptsize >= 50 %}
+			<p class="lead">{{ post.excerpt | strip_html }}&hellip;</p>
+		{% else %}
+			<p>{{ post.content | strip_html | truncatewords:100 }}&hellip;</p>
+		{% endif %}
 
-  (function( $, window, undefined ) {
-    
-     var bs = {
-          close: $(".icon-remove-sign"),
-          searchform: $(".search-form"),
-          canvas: $("body"),
-          dothis: $('.dosearch')
-      };
-    
-    bs.dothis.on('click', function() {
-      $('.search-wrapper').css({ display: "block" });
-      bs.searchform.toggleClass('active');
-      bs.searchform.find('input').focus();
-      bs.canvas.toggleClass('search-overlay');
-    });
-    
-      bs.close.on('click', function() {
-        $('.search-wrapper').removeAttr( 'style' );
-        bs.searchform.toggleClass('active');
-        bs.canvas.removeClass('search-overlay');
-    });
-  })( jQuery, window );
-</script>
+			<div class="text-center">
+			{% if post.description %}
+				<a href="{{ post.url }}" data-toggle="tooltip" title="{{ post.description }}" class="more-link btn btn-danger btn-large">
+					<i class="fa fa-link"></i> read more...
+				</a>
+			{% else %}
+				<a href="{{ post.url }}" data-toggle="tooltip" title="Read more about {{ post.title }}" class="more-link btn btn-danger btn-large">
+					<i class="fa fa-link"></i> read more...
+				</a>
+			{% endif %}
+			</div>
+		</div>
+	</article>
+</div>
+		{% endif %}
 
-
-<!-- Asynchronous Google Analytics snippet -->
-<script>
-  var _gaq = _gaq || [];
-  var pluginUrl = 
- '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
-  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
-  _gaq.push(['_setAccount', 'UA-47889318-2']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-</script>
-
-  
-</body>
-</html>
+	{% endfor %}  
+{% endif %}

@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-04-17T22:30:25+03:00</updated><id>http://localhost:4000/</id><title type="html">Dmitry Kostyaev Blog</title><subtitle>Computer science, machine learning, neural networks</subtitle><author><name>Dmitry Kostyaev</name><email>dmitry@kostyaev.me</email></author><entry><title type="html">Playing with image embeddings</title><link href="http://localhost:4000/blog/Linear-operations" rel="alternate" type="text/html" title="Playing with image embeddings" /><published>2016-06-17T00:00:00+03:00</published><updated>2016-06-17T00:00:00+03:00</updated><id>http://localhost:4000/blog/Linear-operations</id><content type="html" xml:base="http://localhost:4000/blog/Linear-operations">&lt;p&gt;Quite a while ago I worked on image retrieval and performed a little experiment with algebraic operations on image embeddings extracted from convolutional networks. I downloaded a set of publicly available photos, extracted feature vectors using pretrained ResNet 50 and applied cosine distance KNN search using linear combinations of query vectors:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://static1.squarespace.com/static/55366165e4b0e488db74b92b/572cd5bbc2ea5104e50cbf8c/572cd5be7c65e48ce9293423/1462556096928/20160229_manoscar9.jpg&quot;&gt;man&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://s-media-cache-ak0.pinimg.com/736x/e2/73/e7/e273e787cef28c8fe2eb359a97ae0f11.jpg&quot;&gt;woman&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://image.dhgate.com/albu_332362244_00-1.0x0/2013-hot-sale-fashion-flower-lady-dress-woman.jpg&quot;&gt;woman_in_dress&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://static3.therichestimages.com/cdn/780/410/90/c/wp-content/uploads/2015/06/Girl-Mercedes1.jpg&quot;&gt;car_with_woman&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://f.tqn.com/y/moneyfor20s/1/S/h/1/-/-/nice-car.jpg&quot;&gt;car&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.redorbit.com/media/uploads/2012/11/tide.jpg&quot;&gt;sea&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://s2.favim.com/orig/32/coffe-cool-cute-eat-food-Favim.com-253389.jpg&quot;&gt;coffee&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://gloimg.rosegal.com/rosegal/2015/201509/goods-img/1441933712518-P-3102218.jpg?20131202008&quot;&gt;dress&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://static-secure.guim.co.uk/sys-images/Guardian/Pix/pictures/2013/1/30/1359549064145/Crowd-of-people-008.jpg&quot;&gt;crowd&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.seriouseats.com/images/2013/06/20130614-256060-ultimate-cheesy-burger.jpg&quot;&gt;burger&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.e-architect.co.uk/images/jpgs/leeds/jessops_building_sheffield_aw170410_3.jpg&quot;&gt;building&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;All documents and queries can be encoded with the following few lines of code using Caffe:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;encode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;img&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;open_image&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;img&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;preprocess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;img&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;asarray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;img&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;blobs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'data'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;blobs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'data'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reshape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;224&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;224&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;forward&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;blobs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'pool5'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;flatten&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;copy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Encode your documents and queries and perform nearest neighbor search. For NN search I put vectors into Anorm index.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;query_vector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# get 9 ids of nearest vectors from index&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ids&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_nns_by_vector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;query_vector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# load images by ids and show them&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;images&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ids&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;img&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Image&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;open&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id2file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;img&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;continue&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;img&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;centeredCrop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;img&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;128&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;128&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)),&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;128&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;128&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;images&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;img&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;figure&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;figsize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;show&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;images&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sea&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/vectors/output_29_0.png&quot; alt=&quot;png&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sea&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;woman&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/vectors/output_30_0.png&quot; alt=&quot;png&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;building&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;crowd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.5&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sea&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;1.5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/vectors/output_31_0.png&quot; alt=&quot;png&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;woman&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;car&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dress&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/vectors/output_32_0.png&quot; alt=&quot;png&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;coffee&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;1.3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;burger&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/vectors/output_33_0.png&quot; alt=&quot;png&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;man&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dress&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/vectors/output_34_0.png&quot; alt=&quot;png&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;woman_in_dress&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/vectors/output_35_0.png&quot; alt=&quot;png&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;woman_in_dress&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dress&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/vectors/output_36_0.png&quot; alt=&quot;png&quot; /&gt;&lt;/p&gt;</content><author><name>Dmitry Kostyaev</name><email>dmitry@kostyaev.me</email></author><category term="article" /><category term="computer vision" /><category term="features vectors" /><category term="linear operations" /><summary type="html">Quite a while ago I worked on image retrieval and performed a little experiment with algebraic operations on image embeddings extracted from convolutional networks. I downloaded a set of publicly available photos, extracted feature vectors using pretrained ResNet 50 and applied cosine distance KNN search using linear combinations of query vectors:</summary></entry><entry><title type="html">Semantic clustering of images</title><link href="http://localhost:4000/blog/Semantic-Clustering-of-Images" rel="alternate" type="text/html" title="Semantic clustering of images" /><published>2016-03-16T00:00:00+03:00</published><updated>2016-03-16T00:00:00+03:00</updated><id>http://localhost:4000/blog/Semantic%20Clustering%20of%20Images</id><content type="html" xml:base="http://localhost:4000/blog/Semantic-Clustering-of-Images">&lt;p&gt;Recent studies in the field of computer vision have shown the abilities of deep convolutional neural networks to learn high level image representation. These representations have reach semantic and can be very handy in various visual tasks. One of such task that can make use of high level features is semantic clusterization. Let’s find some pictures in Google Web Search, feed them to CNN and apply k-means to the extracted feautures and take the biggest clusters, here is what I got for different queries :&lt;/p&gt;
+
+&lt;p&gt;Query “extreme”:
+&lt;img src=&quot;../../images/semantic/extreme_grid.png&quot; alt=&quot;extreme&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;On the left is the query result and on the right - some groups of images. It’s clear that pictures in the same group are closer in semantic than images across. Here we got two clusters, first for the American rock band and the second for some extreme activity.&lt;/p&gt;
+
+&lt;p&gt;Query “destruction”:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/semantic/distruction_grid.png&quot; alt=&quot;distruction&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Now we have three clusters and arguably three slightly different meanings: an explosion, destroyed buildings and a forest fire. Let’s try a query that for sure should show images with different semantic.&lt;/p&gt;
+
+&lt;p&gt;Query “apple”:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/semantic/apple_grid.png&quot; alt=&quot;apple&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;As you might guess Google will return results containing some Apple products andd we can automatically move images with different meaning to their semantic group by applying clustering algorithm on CNN codes. Having multiple images in top-k biggest clusters we can pull out centroids and use them as different representation of the same concept. Let’s do this for our examples:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/semantic/centroids.png&quot; alt=&quot;centroids&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Here centroids of the “distruction” clusters can be thought as different representations of a destruction. There are many other applications, for example, semantic clusters can help to find the most popular meaning for some text term. We can also apply clustering to filter duplicates as they tend to fall into the same group, in this case we need to select images from different groups.&lt;/p&gt;
+
+&lt;p&gt;So coming to conclusion, deep convolutional neural networks can produce very good abstractions that can be further used in many visual recognition tasks that hardly be possible without them.&lt;/p&gt;</content><author><name>Dmitry Kostyaev</name><email>dmitry@kostyaev.me</email></author><category term="article" /><category term="image" /><category term="semantic" /><category term="clustering" /><category term="kmeans" /><summary type="html">Recent studies in the field of computer vision have shown the abilities of deep convolutional neural networks to learn high level image representation. These representations have reach semantic and can be very handy in various visual tasks. One of such task that can make use of high level features is semantic clusterization. Let’s find some pictures in Google Web Search, feed them to CNN and apply k-means to the extracted feautures and take the biggest clusters, here is what I got for different queries :</summary></entry><entry><title type="html">Why top-5 error is more fair metric than top-1 for ILSVRC models</title><link href="http://localhost:4000/blog/Why-top-5-error-is-more-fair-metric-than-top-1-for-ImageNet-classification-task" rel="alternate" type="text/html" title="Why top-5 error is more fair metric than top-1 for ILSVRC models" /><published>2016-03-01T00:00:00+03:00</published><updated>2016-03-01T00:00:00+03:00</updated><id>http://localhost:4000/blog/Why%20top-5%20error%20is%20more%20fair%20metric%20than%20top-1%20for%20ImageNet%20classification%20task</id><content type="html" xml:base="http://localhost:4000/blog/Why-top-5-error-is-more-fair-metric-than-top-1-for-ImageNet-classification-task">&lt;p&gt;For the most publicly available models trained on ImageNet dataset &lt;a href=&quot;http://stats.stackexchange.com/questions/156471/imagenet-what-is-top-1-and-top-5-error-rate&quot;&gt;top-5&lt;/a&gt; and &lt;a href=&quot;http://stats.stackexchange.com/questions/156471/imagenet-what-is-top-1-and-top-5-error-rate&quot;&gt;top-1&lt;/a&gt; errors are reported. The best perfoming &lt;a href=&quot;https://github.com/KaimingHe/deep-residual-networks&quot;&gt;model&lt;/a&gt; from &lt;a href=&quot;http://image-net.org/challenges/LSVRC/2015/&quot;&gt;ILSVRC 2015&lt;/a&gt; has 6.7% top-5 error and 23% top-1 error evaluated using singe center crop. It’s pretty interesting to find out that human error turned out to be not much better, top-5 error is around 5.1%  according to the result of some experiments descibed in the &lt;a href=&quot;http://karpathy.github.io/2014/09/02/what-i-learned-from-competing-against-a-convnet-on-imagenet/&quot;&gt;article&lt;/a&gt;. An ensembe of models show even better results, six models of different depth leads to 3.57% top-5 error (1st place in ILSVRC 2015). Top-1 error still seems to be very big and one may say that top-5 rule is very forgiving and rules should be tightened and only top-1 should be considered. But top-1 error doesn’t really give you an understanding of how good is you neural network in general, it can only be useful to compare the perfomance of different models. The reason is that ImageNet is a single label dataset containing images that actually can fall into several categories and the orded of those categories is ambiguous. To illustare this let’s look at some of the example images from the training set, starting from example easy to classify:&lt;/p&gt;
+
+&lt;p&gt;Sport cars 
+&lt;img src=&quot;../../images/sport_cars.jpg&quot; alt=&quot;race_cars&quot; height=&quot;250px&quot; width=&quot;750px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Race cars 
+&lt;img src=&quot;../../images/race_cars.jpg&quot; alt=&quot;race_cars&quot; height=&quot;250px&quot; width=&quot;750px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Car wheels 
+&lt;img src=&quot;../../images/car_wheels.jpg&quot; alt=&quot;car_wheels&quot; height=&quot;250px&quot; width=&quot;750px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Now if you look at the next examples, you will find that they are pretty ambigous if you are asked to assign only one label, let’s say, out of five. And for a number of categories there a lot of images with such ambiguity.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/cars_collage.jpg&quot; alt=&quot;cars&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The major problem with the dataset is that for many of the images we can’t say precisely if a category A or a category B describes it the best and the model in such situation is penalized during the training for the the mismatch between the predicted A category and B category given as a ground truth. So even if the image from the evaluation set is better in the sense of an ambiguity but still can be described with multiple labels, it will be harder for the network to determine a pravailing label because the training dataset doesn’t train it to do so very well. And this explain such a big margin between top-1 and top-5 errors.&lt;/p&gt;</content><author><name>Dmitry Kostyaev</name><email>dmitry@kostyaev.me</email></author><category term="article" /><category term="ILSVRC" /><category term="top-1" /><category term="top-5" /><category term="ImageNet" /><category term="dataset" /><summary type="html">For the most publicly available models trained on ImageNet dataset top-5 and top-1 errors are reported. The best perfoming model from ILSVRC 2015 has 6.7% top-5 error and 23% top-1 error evaluated using singe center crop. It’s pretty interesting to find out that human error turned out to be not much better, top-5 error is around 5.1% according to the result of some experiments descibed in the article. An ensembe of models show even better results, six models of different depth leads to 3.57% top-5 error (1st place in ILSVRC 2015). Top-1 error still seems to be very big and one may say that top-5 rule is very forgiving and rules should be tightened and only top-1 should be considered. But top-1 error doesn’t really give you an understanding of how good is you neural network in general, it can only be useful to compare the perfomance of different models. The reason is that ImageNet is a single label dataset containing images that actually can fall into several categories and the orded of those categories is ambiguous. To illustare this let’s look at some of the example images from the training set, starting from example easy to classify:</summary></entry><entry><title type="html">Preparing multilabel dataset for training ConvNet with Caffe</title><link href="http://localhost:4000/blog/Multilabel-Dataset" rel="alternate" type="text/html" title="Preparing multilabel dataset for training ConvNet with Caffe" /><published>2016-02-17T00:00:00+03:00</published><updated>2016-02-17T00:00:00+03:00</updated><id>http://localhost:4000/blog/Multilabel%20Dataset</id><content type="html" xml:base="http://localhost:4000/blog/Multilabel-Dataset">&lt;p&gt;Preparing multilabel training set for caffe framework is a bit nontrivial. So, if you have multiple, possibly varying number of ground truth labels for each training example then here is how you can do it using LMDB store. 
+For LMDB data source you need to separate your data input and your labels by creating two LMDB (one for the data and the second one for the labels). You also have to define two data layers in your network definition, set the same batch size for both of them and disable shuffling for the alignment.&lt;/p&gt;
+
+&lt;p&gt;To share it I’ve created a small script available on &lt;a href=&quot;https://github.com/kostyaev/ml-utils/blob/master/create_multilabel_lmdb.py&quot;&gt;github&lt;/a&gt;. You can run it as in this example:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;python create_multilabel_lmdb.py 
+	--images /path/to/image_file/images.txt 
+	--labels /path/to/labels_file/labels.npy 
+	--imagesOut /path/to/image-lmdb 
+	--labelsOut /path/to/label-lmdb 
+	-n size_of_test_set 
+	--maxPx 256 
+	--minPx 227 
+	--shuffle=true
+	
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;What this script do is reads the images text file having the format like this:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; /path/to/dir/img1.jpg
+ /path/to/dir/img2.jpg
+ ...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Reads the labels file, which is just a 2d numpy array serialized using numpy, here is the example of an array:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[
+	[1,0,1,0,1], 
+	[0,1,0,0,1],
+	[1,1,0,0,0]
+]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The first row indicates that the first image (in the images text file) has labels 1,3 and 5. And the second row says that the second image has labels 2 and 5, the third row - labels 1 and 2.
+This script also shuffles the data, resizes images preserving an aspect ratio and prints mean image values at the end of the work.
+If error occures (e.g if some image file is corrupted or missing), the procedure skips the corrupted image and its label and continues the progress.&lt;/p&gt;</content><author><name>Dmitry Kostyaev</name><email>dmitry@kostyaev.me</email></author><category term="article" /><category term="caffe" /><category term="lmdb" /><category term="multilabel" /><summary type="html">Preparing multilabel training set for caffe framework is a bit nontrivial. So, if you have multiple, possibly varying number of ground truth labels for each training example then here is how you can do it using LMDB store. For LMDB data source you need to separate your data input and your labels by creating two LMDB (one for the data and the second one for the labels). You also have to define two data layers in your network definition, set the same batch size for both of them and disable shuffling for the alignment.</summary></entry><entry><title type="html">Sentiment analysis with CoreNLP</title><link href="http://localhost:4000/blog/Sentiment-analysis" rel="alternate" type="text/html" title="Sentiment analysis with CoreNLP" /><published>2014-06-21T00:00:00+04:00</published><updated>2014-06-21T00:00:00+04:00</updated><id>http://localhost:4000/blog/Sentiment%20analysis</id><content type="html" xml:base="http://localhost:4000/blog/Sentiment-analysis">&lt;p&gt;In the rise of social media customer’s opinions has become extremely valuable for businesses selling their products, financial markets and social researches. To extract opinions from customer’s reviews, comments or other kind of text data you might want to know what sentiment analysis is.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Sentiment analysis and opinion mining is the field of study that analyzes people’s opinions, sentiments, evaluations, attitudes, and emotions from written language.&lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;So the the basic task of sentiment analysis is classifying text into some emotive categories. The most common set of categories are: positive, neutral and negative.&lt;/p&gt;
+
+&lt;h3 id=&quot;methods-for-sentiment-analysis&quot;&gt;Methods for sentiment analysis&lt;/h3&gt;
+&lt;p&gt;There is a number of methods for sentiment analysis that can be divided in two groups:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Lexicon-based methods&lt;/li&gt;
+  &lt;li&gt;Machine learning methods
+    &lt;ul&gt;
+      &lt;li&gt;NB (Naive Bayes classifier)&lt;/li&gt;
+      &lt;li&gt;biNB (Naive Bayes with bag of bigram features)&lt;/li&gt;
+      &lt;li&gt;SVM (Support Vector Machine)&lt;/li&gt;
+      &lt;li&gt;RNTN (Recursive Neural Tensor Network)&lt;/li&gt;
+      &lt;li&gt;RNN (Recursive Neural Network)&lt;/li&gt;
+      &lt;li&gt;MV-RNN (Matrix-Vector RNN)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The last method in the list is claimed to have the better performance than the others. &lt;sup id=&quot;fnref:2&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;corenlp-library&quot;&gt;CoreNLP library&lt;/h3&gt;
+&lt;p&gt;As you may already know there is great open source library for natural language processing named &lt;a href=&quot;http://nlp.stanford.edu/software/corenlp.shtml&quot;&gt;CoreNLP&lt;/a&gt; which includes RNTN for sentiment analysis. The library is written in Java, but there are also some wrappers for other languages.&lt;/p&gt;
+
+&lt;h3 id=&quot;how-to-use-it&quot;&gt;How to use it&lt;/h3&gt;
+
+&lt;p&gt;Let’s dive into details on how to use CoreNLP in Scala. Since Scala is compatible with Java, you can simply import CoreNLP library in your Scala project. To include library and models for sentiment component in your project add the following dependency to the sbt build file:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;n&quot;&gt;libraryDependencies&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;edu.stanford.nlp&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;stanford-corenlp&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;3.3.1&quot;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;artifacts&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Artifact&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;stanford-corenlp&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;models&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Artifact&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;stanford-corenlp&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;When doing analysis with CoreNLP you get fine grained predictions as a result (i.e. 5 classes: very positive, positive, neutral, negative, very negative) which are less accurate than Positive/Neutral/Negative ones. In the code below, we create three categories and map result into them in the end of &lt;code class=&quot;highlighter-rouge&quot;&gt;getSentiment&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;java.util.Properties&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;edu.stanford.nlp.pipeline.StanfordCoreNLP&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;edu.stanford.nlp.ling.CoreAnnotations&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;edu.stanford.nlp.sentiment.SentimentCoreAnnotations&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;edu.stanford.nlp.neural.rnn.RNNCoreAnnotations&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;object&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;SentimentCategory&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Enumeration&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;SentimentCategory&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Int&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Negative&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Neutral&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Positive&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;trait&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;SentimentTools&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;props&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Properties&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;props&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;setProperty&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;annotators&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;tokenize, ssplit, parse, sentiment&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pipeline&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;StanfordCoreNLP&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;props&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getSentiment&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;SentimentCategory&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mainSentiment&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;longest&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;annotation&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pipeline&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;annotation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;classOf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;CoreAnnotations.SentencesAnnotation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;it&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;iterator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;it&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hasNext&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+          &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sentence&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;it&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+          &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tree&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sentence&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;classOf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;SentimentCoreAnnotations.AnnotatedTree&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt;
+          &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sentiment&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;RNNCoreAnnotations&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getPredictedClass&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tree&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+          &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;partText&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sentence&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;toString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+          &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;partText&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;longest&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;mainSentiment&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sentiment&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;longest&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;partText&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+          &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;SentimentCategory._&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mainSentiment&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;nc&quot;&gt;Negative&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mainSentiment&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;nc&quot;&gt;Neutral&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;
+        &lt;span class=&quot;nc&quot;&gt;Positive&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;div class=&quot;footnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:1&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;http://www.morganclaypool.com/doi/abs/10.2200/S00416ED1V01Y201204HLT016&quot;&gt;Sentiment Analysis and Opinion Mining Synthesis Lectures on Human Language Technologies&lt;/a&gt;&amp;nbsp;&lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:2&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;http://nlp.stanford.edu/~socherr/EMNLP2013_RNTN.pdf&quot;&gt;Recursive Deep Models for Semantic Compositionality Over a Sentiment Treebank&lt;/a&gt;&amp;nbsp;&lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;</content><author><name>Dmitry Kostyaev</name><email>dmitry@kostyaev.me</email></author><category term="article" /><category term="sentiment analysis" /><category term="CoreNLP" /><category term="scala" /><summary type="html">In the rise of social media customer’s opinions has become extremely valuable for businesses selling their products, financial markets and social researches. To extract opinions from customer’s reviews, comments or other kind of text data you might want to know what sentiment analysis is.</summary></entry></feed>

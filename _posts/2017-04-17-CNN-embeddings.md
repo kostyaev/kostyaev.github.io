@@ -34,7 +34,7 @@ def encode(url):
     return net.blobs['pool5'].data[0].flatten().copy()
 ~~~
 
-Encode your documents and queries and perform nearest neighbor search. For NN search I put vectors into Anorm index.
+Encode your documents and queries and perform nearest neighbor (NN) search. For fast NN search I put vectors into [Annoy](https://github.com/spotify/annoy) index.
 
 ~~~ python
     

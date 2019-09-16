@@ -2,7 +2,8 @@
 layout: post
 title: Preparing multilabel dataset for training ConvNet with Caffe
 modified: 2016-02-17
-category: article
+categories: 
+  - Caffe
 tags: [caffe, lmdb, multilabel]
 comments: true
 share: true

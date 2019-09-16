@@ -3,7 +3,8 @@ layout: post
 title: Sentiment analysis with CoreNLP
 description: "How to do sentiment analysis with CoreNLP library"
 modified: 2014-06-21
-category: article
+categories: 
+  - NLP
 tags: [sentiment analysis, CoreNLP, scala]
 comments: true
 share: true

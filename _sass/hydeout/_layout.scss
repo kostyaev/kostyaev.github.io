@@ -106,6 +106,14 @@ body {
   }
 }
 
+// Tune font-size to fit mathjax formulas
+@media(max-width:$medium-breakpoint){
+  .mjx-chtml{ font-size: 75% !important; }
+}
+
+@media(min-width:$medium-breakpoint){
+  .mjx-chtml{ font-size: 110% !important; }
+}
 
 /* -----------------------------------------------------------
   Mobile view for home page)

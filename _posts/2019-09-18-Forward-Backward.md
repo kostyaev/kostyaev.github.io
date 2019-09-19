@@ -1,7 +1,6 @@
 ---
 layout: post
 title: "Forward-Backward Algorithm"
-sub_title: "Theory"
 tags: [HMM, forward-backward]
 comments: true
 share: true
@@ -27,7 +26,7 @@ The forward pass computes: $p(z_k,x_{1:k}) \forall k=1,..,n$
 
 The backward pass computes: $p(x_{k+1:n} \vert  z_k) \forall k=1,..,n$
 
-For now let's assume that we've already computed forward and backward parts, in other words we know $p(z_k,x_{1:k})$ and $p(x_{k+1:n} \vert  z_k)$. How does it help us to get desired $p(z_k\vert x)$ ?
+For now let's assume that we've already computed forward and backward parts, in other words we know $p(z_k,x_{1:k})$ and $p(x_{k+1:n} \vert  z_k)$. How does it help us to get desired $p(z_k\vert x)$?
 
 $$
 \begin{align}
@@ -51,7 +50,7 @@ $$
 \begin{align}
 p(z_k, x_{1:k}) &= \sum_{z_{k-1}=1}^{m} p(z_k,z_{k-1},x_{1:k}) \\
 &= \sum_{z_{k-1}=1}^{m} p(x_k\vert z_k,z_{k-1},x_{1:k-1})
-                     p(z_k\vert z_{k-1},x_{1:k-1}) 
+                     p(z_k\vert z_{k-1},x_{1:k-1})
                      p(z_{k-1},x_{1:k-1})
 \end{align}
 $$

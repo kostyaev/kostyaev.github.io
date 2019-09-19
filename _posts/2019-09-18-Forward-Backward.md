@@ -97,7 +97,7 @@ p(x_n\vert z_{n-1}) &= \sum_{z_n=1}^{m} p(x_n,z_n\vert z_{n-1}) \\
 \end{align}
 $$
 
-This formula is a special case of previous more general formula where the term p(x_{k+2:n} \vert  z_{k+1}) has become equal to 1, and if $k=n-1$ theh we'll get p(x_{n+1} \vert  z_n) = 1.
+This formula is a special case of previous more general formula where the term p(x_{k+2:n} \vert  z_{k+1}) has become equal to 1, and if $k=n-1$ theh we'll get $p(x_{n+1} \vert  z_n) = 1$.
 
 Summarizing all that in the final formula:
 

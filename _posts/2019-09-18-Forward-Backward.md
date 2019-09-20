@@ -7,7 +7,7 @@ share: true
 mathjax: true
 ---
 
-Forward-backward algorithm (FB) is a particular case of a dynamic programming. This algorithm is well known in the context of Hidden Markov Models (HMM) where it is used for training and inference, Kalman Smoothers and Connectionist Temporal Classification (CTC). 
+Forward-backward algorithm (FB) is a particular case of a dynamic programming. This algorithm is well known in the context of Hidden Markov Models (HMM) where it is used for training and inference, Kalman Smoothers and Connectionist Temporal Classification [(CTC)](http://www.cs.toronto.edu/~graves/icml_2006.pdf). 
 It consists of two passes: the first pass goes forward in time and second pass goes backward, hence the name.
 
 FB algorithm heavily relies on Markov property and output independence assumptions from HMM. Actually a lot of terms here are inherited from HMM, so if you're not familliar then this [HMM tutorial](http://cs229.stanford.edu/section/cs229-hmm.pdf) might come in handy.
@@ -107,3 +107,22 @@ p(x_{n+1} \vert  z_n) = 1
 $$
 
 This is quite similar to forward part and time complexity is also $O(nm^2)$ because we have $k=1..n$ timesteps, $m$ values of $z_k$ and $z_{k+1}$ that we iterate through.
+
+## Naive approach
+
+To better understand the value of FB algorithm let's just compare it with the naive approach. With conditional probability formula we know that $p(z_k \vert x) = \frac{p(x,z_k)}{p(x)} \propto p(x,z_k) $.
+We can try directly compute $p(x,z_k)$ and for that we have to take into account all possible sequences of $z$ where $z_k$ might have been occured or in other words we should marginalize out all except $z_k$: $\hat{z} = z_1..z_{k-1},z_{k+1}..z_n$ variables:
+
+$$ 
+\begin{align}
+p(x,z_k) &= \sum_{\hat{z}} p(x,\hat{z}) \\
+&= \sum_{z_1} \sum_{z_2} ... \sum_{z_{k-1}} \sum_{z_{k+1}} ... \sum_{z_{n}} p(x,\hat{z}) 
+\end{align}
+$$
+
+The number of sums is equal to number of possible permutations with repetitions of hidden state sequence $\hat{z}$ which is equal to $m^{n-1}$. This is an exponential time complexity, for $T = 101$ steps and $m = 10$ hidden states it will have $10^{100}$ terms to compute. While Forward-Backward algorithm will have $m^2 \times n = 100\times101 \approx 10^4$, that is $10^{96}$ times faster!
+
+<!--
+References:
+http://www.andrew.cmu.edu/user/scheines/tutor/d-sep.html
+-->

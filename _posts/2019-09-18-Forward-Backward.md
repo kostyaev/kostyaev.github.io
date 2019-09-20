@@ -110,7 +110,10 @@ This is quite similar to forward part and time complexity is also $O(nm^2)$ beca
 
 ## Naive approach
 
-To better understand the value of FB algorithm let's just compare it with the naive approach. With conditional probability formula we know that $p(z_k \vert x) = \frac{p(x,z_k)}{p(x)} \propto p(x,z_k) $.
+To better understand the value of FB algorithm let's just compare it with the naive approach. With conditional probability formula we know that: 
+
+$$p(z_k \vert x) = \frac{p(x,z_k)}{p(x)} \propto p(x,z_k) $$
+
 We can try directly compute $p(x,z_k)$ and for that we have to take into account all possible sequences of $z$ where $z_k$ might have been occured or in other words we should marginalize out all except $z_k$: $\hat{z} = z_1..z_{k-1},z_{k+1}..z_n$ variables:
 
 $$ 

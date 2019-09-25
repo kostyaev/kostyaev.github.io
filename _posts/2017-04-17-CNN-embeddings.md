@@ -6,7 +6,6 @@ categories:
 tags: [computer vision, features vectors, linear operations]
 comments: true
 share: true
-sidebar_link: true
 excerpt_separator: "<!--more-->"
 ---
 

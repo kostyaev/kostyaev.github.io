@@ -7,7 +7,7 @@ share: true
 mathjax: true
 ---
 
-Forward-backward algorithm (FB) is a particular case of a dynamic programming. This algorithm is well known in the context of Hidden Markov Models (HMM) where it is used for training and inference, Kalman Smoothers and Connectionist Temporal Classification [(CTC)](http://www.cs.toronto.edu/~graves/icml_2006.pdf). 
+Forward-backward algorithm (FB) is a particular case of a dynamic programming. This algorithm is well known in the context of Hidden Markov Models (HMM) where it is used for training and inference, Kalman Smoothers and Connectionist Temporal Classification ([CTC](http://www.cs.toronto.edu/~graves/icml_2006.pdf)). 
 It consists of two passes: the first pass goes forward in time and second pass goes backward, hence the name.
 
 FB algorithm heavily relies on Markov property and output independence assumptions from HMM. Actually a lot of terms here are inherited from HMM, so if you're not familliar then this [HMM tutorial](http://cs229.stanford.edu/section/cs229-hmm.pdf) might come in handy.
@@ -36,7 +36,7 @@ p(z_k\vert x) \propto p(z_k,x) &= p(z_k, x_{1:k}, x_{k+1:n}) \\
 \end{align}
 $$
 
-The last step applies conditional independence property ($x_{k+1:n}$ is conditionally independent of $x_{1:k}$). After simplification we have: 
+The last step applies [D-separation rule](http://www.andrew.cmu.edu/user/scheines/tutor/d-sep.html) ($x_{k+1:n}$ is conditionally independent of $x_{1:k}$ given $z_k$). After simplification we have: 
 
 $$p(z_k\vert x) \propto p(x_{k+1:n}\vert z_k) p(z_k, x_{1:k}) $$
 
@@ -124,8 +124,3 @@ p(x,z_k) &= \sum_{\hat{z}} p(x,\hat{z}) \\
 $$
 
 The number of sums is equal to number of possible permutations with repetitions of hidden state sequence $\hat{z}$ which is equal to $m^{n-1}$. This is an exponential time complexity, for $T = 101$ steps and $m = 10$ hidden states it will have $10^{100}$ terms to compute. While Forward-Backward algorithm will have $m^2 \times n = 100\times101 \approx 10^4$, that is $10^{96}$ times faster!
-
-<!--
-References:
-http://www.andrew.cmu.edu/user/scheines/tutor/d-sep.html
--->

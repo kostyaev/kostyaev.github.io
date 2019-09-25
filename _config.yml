@@ -4,7 +4,7 @@ highlighter:      rouge
 
 # Setup
 title:            Dmitry Kostyaev
-tagline:          ''
+tagline:          'ML and CS artices'
 description:      'Machine Learning Research Engineer'
 url:              https://kostyaev.github.io
 baseurl:          ''

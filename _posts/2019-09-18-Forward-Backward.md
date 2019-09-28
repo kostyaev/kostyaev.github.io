@@ -15,7 +15,7 @@ FB algorithm heavily relies on Markov property and output independence assumptio
 Suppose that $$z=\{z_1,z_2,..,z_n\}$$ is hidden variable, $x=\{z_1,z_2,..,z_n\}$ is observable variable and $k=1..n$ denotes timestep, then
 
 * $$p(x_k\vert z_k)$$ is an Emission probability;
-* $p(z_k\vert z_k-1)$ is a Transition probability;
+* $p(z_k\vert z_{k-1})$ is a Transition probability;
 * $p(z_1)$ is an Initial probability.
 
 To simplify the notation let's further assume that hidden state variable $z_i$ defined on an interger set $\{1,..,m\}$
@@ -118,8 +118,8 @@ We can try directly compute $p(x,z_k)$ and for that we have to take into account
 
 $$ 
 \begin{align}
-p(x,z_k) &= \sum_{\hat{z}} p(x,\hat{z}) \\
-&= \sum_{z_1} \sum_{z_2} ... \sum_{z_{k-1}} \sum_{z_{k+1}} ... \sum_{z_{n}} p(x,\hat{z}) 
+p(x,z_k) &= \sum_{\hat{z}} p(x,z) \\
+&= \sum_{z_1} \sum_{z_2} ... \sum_{z_{k-1}} \sum_{z_{k+1}} ... \sum_{z_{n}} p(x,z) 
 \end{align}
 $$
 

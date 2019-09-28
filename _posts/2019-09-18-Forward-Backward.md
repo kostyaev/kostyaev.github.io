@@ -51,15 +51,12 @@ $$
 p(z_k, x_{1:k}) &= \sum_{z_{k-1}=1}^{m} p(z_k,z_{k-1},x_{1:k}) \\
 &= \sum_{z_{k-1}=1}^{m} p(x_k\vert z_k,z_{k-1},x_{1:k-1})
                      p(z_k\vert z_{k-1},x_{1:k-1})
+                     p(z_{k-1},x_{1:k-1}) \\
+&= \sum_{z_{k-1}=1}^{m} p(x_k\vert z_k) 
+                     p(z_k\vert z_{k-1}) 
                      p(z_{k-1},x_{1:k-1})
 \end{align}
 $$
-
-After applying Markov properties we get:
-$$p(z_k, x_{1:k})
-= \sum_{z_{k-1}=1}^{m} p(x_k\vert z_k) 
-                     p(z_k\vert z_{k-1}) 
-                     p(z_{k-1},x_{1:k-1}) $$
 
 * $p(x_k\vert z_k)$ is given as an emission probability 
 * $p(z_k\vert z_{k-1})$ is given as a transition probability 
@@ -75,13 +72,10 @@ What about time complexity? We have $n$ timesteps ($k=1..n$) and inside each tim
 $$
 \begin{align}
 p(x_{k+1:n}\vert z_k) &= \sum_{z_{k+1}=1}^{m} p(x_{k+1:n}, z_{k+1} \vert  z_k) \\
-&= \sum_{z_{k+1}=1}^{m} p(x_{k+2:n} \vert  x_{k+1}, z_{k+1}, z_k)  p(x_{k+1}\vert z_{k+1}, z_k) p(z_{k+1}\vert z_k) 
+&= \sum_{z_{k+1}=1}^{m} p(x_{k+2:n} \vert  x_{k+1}, z_{k+1}, z_k)  p(x_{k+1}\vert z_{k+1}, z_k) p(z_{k+1}\vert z_k) \\
+&= \sum_{z_{k+1}=1}^{m} p(x_{k+2:n} \vert  z_{k+1}) p(x_{k+1}\vert z_{k+1}) p(z_{k+1}\vert z_k)
 \end{align}
 $$
-
-And again after simplification with Markov assumptions we get:
-
-$$ p(x_{k+1:n}\vert z_k) = \sum_{z_{k+1}=1}^{m} p(x_{k+2:n} \vert  z_{k+1}) p(x_{k+1}\vert z_{k+1}) p(z_{k+1}\vert z_k) $$
 
 * $p(x_{k+2:n} \vert  z_{k+1})$ can be computed recurrently
 * $p(x_{k+1}\vert z_{k+1})$ is given as an emission probability 

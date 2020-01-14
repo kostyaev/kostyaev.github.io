@@ -9,7 +9,7 @@ excerpt_separator: "<!--more-->"
 ---
 
 
-Causal 1D convolution are quite useful when working with autoregressive models like WaveNet. To define this layer in tensorflow 2.0 we just pass "causal" padding in Conv1D layer arguments as is the following one liner: 
+Causal 1D convolution are quite useful when working with autoregressive models like WaveNet. To define this layer in tensorflow 2 we just pass "causal" padding in Conv1D layer arguments as is the following one liner: 
 
 ```python
 conv_layer = tf.keras.layers.Conv1D(

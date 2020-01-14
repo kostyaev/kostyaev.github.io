@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Nicer Causal Convs for Tensorflow 2.0"
+title: "Nicer Causal Convs for Tensorflow 2"
 tags: [conv1d, causal, wavenet, autoregressive, tensorflow, dilated]
 comments: true
 share: true

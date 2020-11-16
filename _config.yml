@@ -23,7 +23,8 @@ plugins:
   - jekyll-paginate
 
 # Sidebar link settings
-sidebar_home_link:  true
+sidebar_home_link: true
+sidebar_medium_link: https://medium.com/@dkostyaev
 
 google_analytics: UA-47889318-3
 

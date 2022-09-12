@@ -3,7 +3,7 @@ markdown:         kramdown
 highlighter:      rouge
 
 # Setup
-title:            Dmitry Kostyaev
+title:            Dmitry Kostiaev
 tagline:          'ML and CS artices'
 description:      'Machine Learning Research Engineer'
 url:              https://kostyaev.github.io
